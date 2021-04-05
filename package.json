@@ -1,0 +1,37 @@
+{
+  "name": "angles-javascript-client",
+  "version": "1.0.0",
+  "description": "In development",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnglesHQ/angles-javascript-client.git"
+  },
+  "keywords": [
+    "testing",
+    "automation",
+    "dashboard",
+    "angles"
+  ],
+  "author": "Sergio Neves Barros",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/AnglesHQ/angles-javascript-client/issues"
+  },
+  "homepage": "https://github.com/AnglesHQ/angles-javascript-client#readme",
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
+    "eslint": "^7.23.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
