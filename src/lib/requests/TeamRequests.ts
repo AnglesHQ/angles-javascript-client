@@ -1,6 +1,6 @@
 import { AxiosResponse, AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests'
-import { Team } from './types';
+import { Team } from '../models/Types';
 
 export class TeamRequests extends BaseRequests {
 

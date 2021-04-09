@@ -1,6 +1,6 @@
 import { AxiosResponse, AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests';
-import { Environment } from './types';
+import { Environment } from '../models/Types';
 
 export class EnvironmentRequests extends BaseRequests {
 

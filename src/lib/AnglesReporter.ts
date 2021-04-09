@@ -1,12 +1,19 @@
 import axios, { AxiosInstance} from "axios";
-import { TeamRequests } from './TeamRequests';
-import { EnvironmentRequests } from './EnvironmentRequests';
+import { TeamRequests } from './requests/TeamRequests';
+import { EnvironmentRequests } from './requests/EnvironmentRequests';
+import { BuildRequests } from './requests/BuildRequests';
+import { ExecutionRequests } from './requests/ExecutionRequests';
+import { ScreenshotRequests } from './requests/ScreenshotRequests';
+
 export class AnglesReporterClass {
 
     private static _instance:AnglesReporterClass = new AnglesReporterClass();
     protected axiosInstance: AxiosInstance;
     public teams:TeamRequests;
     public environments:EnvironmentRequests;
+    public builds:BuildRequests;
+    public executions:ExecutionRequests;
+    public screenshots:ScreenshotRequests;
 
     constructor() {
       if (AnglesReporterClass._instance) {
@@ -27,6 +34,9 @@ export class AnglesReporterClass {
       this.axiosInstance = axios.create(apiConfig);
       this.teams = new TeamRequests(this.axiosInstance);
       this.environments = new EnvironmentRequests(this.axiosInstance);
+      this.builds = new BuildRequests(this.axiosInstance);
+      this.executions = new ExecutionRequests(this.axiosInstance);
+      this.screenshots = new ScreenshotRequests(this.axiosInstance);
     }
 
     public static getInstance():AnglesReporterClass {

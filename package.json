@@ -25,9 +25,13 @@
   },
   "homepage": "https://github.com/AnglesHQ/angles-javascript-client#readme",
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
   },
   "devDependencies": {
+    "@types/node": "^14.14.37",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "eslint": "^7.23.0",
