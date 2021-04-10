@@ -1,7 +1,7 @@
 import { AnglesReporterClass } from './lib/AnglesReporter'
 import { Team, Environment , Action, Step, StepStates } from './lib/models/Types'
-import { CreateBuild, CreateExecution, CreateScreenshot } from './lib/models/RequestTypes';
-// comment
+import { StoreScreenshot } from './lib/models/RequestTypes';
+
 const reporter = AnglesReporterClass.getInstance();
 
 const runTest = async () => {
@@ -19,60 +19,38 @@ const runTest = async () => {
   //   console.log(`Environment: ${environment.name}`);
   // })
 
-  const createBuildRequest = new CreateBuild();
-  createBuildRequest.name = "angles-javascript-client";
-  createBuildRequest.environment = "qa";
-  createBuildRequest.team = "qa";
-  createBuildRequest.component = "regression";
-  const createdBuild = await reporter.builds.createBuild(createBuildRequest);
-
-  const build = await reporter.builds.getBuild(createdBuild._id);
-  console.log(JSON.stringify(build._id));
-
-  const screenshotRequest = new CreateScreenshot();
-  screenshotRequest.timestamp = new Date();
-  screenshotRequest.view = "test-view";
-  screenshotRequest.buildId = build._id;
-  screenshotRequest.filePath = "/Users/sergio.barros/Desktop/image.png";
-  let screenshot;
   try {
-    screenshot = await reporter.screenshots.saveScreenshot(screenshotRequest)
-    console.log(screenshot._id);
-  } catch (error) {
+    // start build
+    await reporter.startBuild("angles-javascript-client", "qa", "qa", "regression");
+
+    // start test
+    reporter.startTest("test1", "suite1");
+
+    // add action
+    reporter.addAction("My first action");
+
+    // start reporting examples
+    const screenshot = await reporter.storeScreenshot("/Users/sergio.barros/Desktop/image.png", "view_1");
+    reporter.infoWithScreenshot("Took Screenshot", screenshot._id);
+    reporter.pass("Assertion", "true", "true", "Just doing an assertion");
+
+    // store the test
+    await reporter.saveTest();
+
+    // start test
+    reporter.startTest("test2", "suite1");
+
+    // add action
+    reporter.addAction("My second action");
+
+    // start reporting examples
+    const screenshot2 = await reporter.storeScreenshot("/Users/sergio.barros/Desktop/image.png", "view_1");
+    reporter.infoWithScreenshot("Took Screenshot", screenshot2._id);
+    reporter.pass("Assertion", "true", "true", "Just doing an assertion");
+    await reporter.saveTest();
+
+  } catch(error) {
     console.log(error);
-  }
-  
-  const createExecutionRequest = new CreateExecution();
-  createExecutionRequest.title = "test1";
-  createExecutionRequest.suite = "suite1";
-  createExecutionRequest.build = build._id;
-  createExecutionRequest.actions = [];
-
-  // create action
-  const action = new Action();
-  action.name = "My action";
-  action.start = new Date();
-
-  const step = new Step();
-  step.name = "Step Name";
-  step.actual = "true";
-  step.expected = "true";
-  step.info = "My info";
-  step.status = StepStates.PASS;
-  step.timestamp = new Date();
-  step.screenshot = screenshot._id;
-
-  action.steps = [];
-  action.steps.push(step);
-
-  createExecutionRequest.actions.push(action);
-
-  try {
-    console.log('REQUEST: ' + JSON.stringify(createExecutionRequest));
-    const execution = await reporter.executions.saveExecution(createExecutionRequest);
-    console.log(`Execution: ${JSON.stringify(execution)}`);
-  } catch (error) {
-    console.log(JSON.stringify(error));
   }
 
 }

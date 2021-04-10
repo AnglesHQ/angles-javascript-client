@@ -5,6 +5,13 @@ export class CreateBuild {
   team: string;
   component: string;
   name: string;
+
+  constructor(name: string, environment: string, team: string, component: string) {
+    this.environment = environment;
+    this.team = team;
+    this.component = component;
+    this.name = name;
+  }
 }
 
 export class CreateExecution {
@@ -18,7 +25,7 @@ export class CreateExecution {
   meta: Map<string, string>;
 }
 
-export class CreateScreenshot {
+export class StoreScreenshot {
   buildId: string;
   view: string;
   timestamp: Date;

@@ -2,7 +2,7 @@ import { AxiosResponse, AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Types';
-import { CreateScreenshot } from '../models/RequestTypes';
+import { StoreScreenshot } from '../models/RequestTypes';
 
 export class ScreenshotRequests extends BaseRequests {
 
@@ -20,16 +20,16 @@ export class ScreenshotRequests extends BaseRequests {
     return this.success(response);
   }
 
-  public async saveScreenshot(createScreenshot: CreateScreenshot): Promise<Screenshot> {
+  public async saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
     const formData = new FormData();
-    const fullPath = this.path.resolve(createScreenshot.filePath);
+    const fullPath = this.path.resolve(storeScreenshot.filePath);
     const fileStream = this.fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream);
     const headers = formData.getHeaders(
       {
-        buildId: createScreenshot.buildId,
-        view: createScreenshot.view,
-        timestamp: createScreenshot.timestamp.toISOString()
+        buildId: storeScreenshot.buildId,
+        view: storeScreenshot.view,
+        timestamp: storeScreenshot.timestamp.toISOString()
       }
     );
     const response: AxiosResponse<Screenshot> = await this.axios.post<Screenshot>(`screenshot/`,
