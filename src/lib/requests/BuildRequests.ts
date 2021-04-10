@@ -1,6 +1,6 @@
 import { AxiosResponse, AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests';
-import { Build } from '../models/Types';
+import { Artifact, Build } from '../models/Types';
 import { CreateBuild } from '../models/RequestTypes';
 
 export class BuildRequests extends BaseRequests {
@@ -24,6 +24,17 @@ export class BuildRequests extends BaseRequests {
 
   public async createBuild(request: CreateBuild): Promise<Build> {
     const response: AxiosResponse<Build> = await this.axios.post<Build>(`build`, request);
+    return this.success(response);
+  }
+
+  public async addArtifacts(buildId: string, artifacts: Artifact[]): Promise<Build> {
+    const response: AxiosResponse<Build> = await this.axios.put<Build>(`build/${buildId}/artifacts`, {
+      artifacts: artifacts
+    },  {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
     return this.success(response);
   }
 }

@@ -4,8 +4,13 @@ import { EnvironmentRequests } from './requests/EnvironmentRequests';
 import { BuildRequests } from './requests/BuildRequests';
 import { ExecutionRequests } from './requests/ExecutionRequests';
 import { ScreenshotRequests } from './requests/ScreenshotRequests';
-import { CreateBuild, CreateExecution, StoreScreenshot } from './models/RequestTypes';
-import { Action, Build, Execution, Screenshot, Step, StepStates } from './models/Types';
+import {
+  CreateBuild,
+  CreateExecution,
+  ScreenshotPlatform,
+  StoreScreenshot
+} from './models/RequestTypes';
+import { Action, Artifact, Build, Execution, Screenshot, Step, StepStates } from './models/Types';
 
 export class AnglesReporterClass {
 
@@ -60,6 +65,10 @@ export class AnglesReporterClass {
     return this.currentBuild;
   }
 
+  public async addArtifacts(artifacts: Artifact[]): Promise<Build> {
+    return await this.builds.addArtifacts(this.currentBuild._id, artifacts);
+  }
+
   public startTest(title:string, suite: string):void {
     this.currentExecution = new CreateExecution();
     this.currentExecution.title = title;
@@ -73,14 +82,18 @@ export class AnglesReporterClass {
     return await this.executions.saveExecution(this.currentExecution)
   }
 
-  public async storeScreenshot(filePath:string, view:string): Promise<Screenshot> {
+  public async saveScreenshot(filePath:string, view:string): Promise<Screenshot>  {
+    return await this.saveScreenshotWithPlatform(filePath, view, undefined);
+  }
+
+  public async saveScreenshotWithPlatform(filePath:string, view:string, platform:ScreenshotPlatform): Promise<Screenshot> {
     const storeScreenshot = new StoreScreenshot();
     storeScreenshot.buildId = this.currentBuild._id;
     storeScreenshot.filePath = filePath;
     storeScreenshot.view = view;
     storeScreenshot.timestamp = new Date();
     try {
-      return await this.screenshots.saveScreenshot(storeScreenshot);
+      return await this.screenshots.saveScreenshotWithPlatform(storeScreenshot, platform);
     } catch (error) {
       this.error(error);
     }

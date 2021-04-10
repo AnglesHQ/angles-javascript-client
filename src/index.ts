@@ -1,6 +1,7 @@
 import { AnglesReporterClass } from './lib/AnglesReporter'
 import { Team, Environment , Action, Step, StepStates } from './lib/models/Types'
-import { StoreScreenshot } from './lib/models/RequestTypes';
+import { ScreenshotPlatform, StoreScreenshot } from './lib/models/RequestTypes';
+import { Artifact } from '../dist/lib/types';
 
 const reporter = AnglesReporterClass.getInstance();
 
@@ -23,6 +24,15 @@ const runTest = async () => {
     // start build
     await reporter.startBuild("angles-javascript-client", "qa", "qa", "regression");
 
+    // add artifacts
+    const artifact = new Artifact();
+    artifact.artifactId = 'angles-ui';
+    artifact.groupId = 'anglesHQ';
+    artifact.version = '1.0.0';
+    const artifactArray: Artifact[] = [];
+    artifactArray.push(artifact);
+    await reporter.addArtifacts(artifactArray);
+
     // start test
     reporter.startTest("test1", "suite1");
 
@@ -30,23 +40,14 @@ const runTest = async () => {
     reporter.addAction("My first action");
 
     // start reporting examples
-    const screenshot = await reporter.storeScreenshot("/Users/sergio.barros/Desktop/image.png", "view_1");
+    const platform = new ScreenshotPlatform();
+    platform.platformName = "Android";
+    platform.browserName = "Chrome";
+    const screenshot = await reporter.saveScreenshotWithPlatform("/Users/sergio.barros/Desktop/image.png", "view_1", platform);
     reporter.infoWithScreenshot("Took Screenshot", screenshot._id);
     reporter.pass("Assertion", "true", "true", "Just doing an assertion");
 
     // store the test
-    await reporter.saveTest();
-
-    // start test
-    reporter.startTest("test2", "suite1");
-
-    // add action
-    reporter.addAction("My second action");
-
-    // start reporting examples
-    const screenshot2 = await reporter.storeScreenshot("/Users/sergio.barros/Desktop/image.png", "view_1");
-    reporter.infoWithScreenshot("Took Screenshot", screenshot2._id);
-    reporter.pass("Assertion", "true", "true", "Just doing an assertion");
     await reporter.saveTest();
 
   } catch(error) {

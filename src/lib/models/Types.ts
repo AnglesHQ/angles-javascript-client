@@ -105,7 +105,6 @@ export class Screenshot {
   tags: string[];
 }
 
-
 export class Platform {
   _id: string;
   platformName: string;

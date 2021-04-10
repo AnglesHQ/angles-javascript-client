@@ -2,7 +2,7 @@ import { AxiosResponse, AxiosInstance } from 'axios';
 import FormData from 'form-data';
 import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Types';
-import { StoreScreenshot } from '../models/RequestTypes';
+import { ScreenshotPlatform, StoreScreenshot } from '../models/RequestTypes';
 
 export class ScreenshotRequests extends BaseRequests {
 
@@ -20,11 +20,20 @@ export class ScreenshotRequests extends BaseRequests {
     return this.success(response);
   }
 
-  public async saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
+  public async saveScreenshot(storeScreenshot: StoreScreenshot) : Promise<Screenshot> {
+    return await this.saveScreenshotWithPlatform(storeScreenshot, undefined);
+  }
+
+  public async saveScreenshotWithPlatform(storeScreenshot: StoreScreenshot, platform: ScreenshotPlatform): Promise<Screenshot> {
     const formData = new FormData();
     const fullPath = this.path.resolve(storeScreenshot.filePath);
     const fileStream = this.fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream);
+    if (platform != undefined) {
+      Object.entries(platform).forEach(([ key, value]) => {
+        formData.append(key, value);
+      })
+    }
     const headers = formData.getHeaders(
       {
         buildId: storeScreenshot.buildId,
