@@ -1,17 +1,16 @@
 import { AxiosResponse, AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests';
-import { Environment } from '../models/Types';
+import { Environment } from '../models/Environment';
 
 export class EnvironmentRequests extends BaseRequests {
-
   private axios: AxiosInstance;
 
-  public constructor (axiosInstance: AxiosInstance) {
+  public constructor(axiosInstance: AxiosInstance) {
     super();
     this.axios = axiosInstance;
   }
 
-  public async getEnvironment(environmentId:string): Promise<Environment> {
+  public async getEnvironment(environmentId: string): Promise<Environment> {
     const response: AxiosResponse<Environment> = await this.axios.get<Environment>(`environment/${environmentId}`);
     return this.success(response);
   }

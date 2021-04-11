@@ -1,12 +1,11 @@
 import { AxiosResponse, AxiosInstance } from 'axios';
-import { BaseRequests } from './BaseRequests'
-import { Team } from '../models/Types';
+import { BaseRequests } from './BaseRequests';
+import { Team } from '../models/Team';
 
 export class TeamRequests extends BaseRequests {
-
   private axios: AxiosInstance;
 
-  public constructor (axiosInstance: AxiosInstance) {
+  public constructor(axiosInstance: AxiosInstance) {
     super();
     this.axios = axiosInstance;
   }
