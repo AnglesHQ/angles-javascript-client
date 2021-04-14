@@ -60,6 +60,4 @@ import { AnglesReporterClass } from './lib/AnglesReporter';
 
 // runTest();
 
-export {
-  AnglesReporterClass
-}
+export default AnglesReporterClass.getInstance();

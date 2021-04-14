@@ -1,9 +1,9 @@
 {
   "name": "angles-javascript-client",
-  "version": "1.0.0-BETA2",
+  "version": "1.0.0-BETA4",
   "description": "This is the javascript client for the Angles Dashboard. It allows you to store your test results.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
     "start": "node dist/index.js",
