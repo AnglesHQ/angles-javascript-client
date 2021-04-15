@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import path from 'path';
 import { TeamRequests } from './requests/TeamRequests';
 import { EnvironmentRequests } from './requests/EnvironmentRequests';
 import { BuildRequests } from './requests/BuildRequests';
@@ -14,6 +15,7 @@ import { StoreScreenshot } from './models/requests/StoreScreenshot';
 import { StepStates } from './models/enum/StepStates';
 import { Step } from './models/Step';
 import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
+import { Execution } from './models/Execution';
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -44,18 +46,21 @@ export class AnglesReporterClass {
       throw new Error('Error: Instantiation failed: Use AnglesReporterClass.getInstance() instead of new.');
     }
     AnglesReporterClass._instance = this;
+    this.instantiateAxios();
+  }
 
+  public setBaseUrl(baseUrl: string) {
+    this.apiConfig.baseURL = baseUrl;
+    this.instantiateAxios();
+  }
+
+  private instantiateAxios():void {
     this.axiosInstance = axios.create(this.apiConfig);
     this.teams = new TeamRequests(this.axiosInstance);
     this.environments = new EnvironmentRequests(this.axiosInstance);
     this.builds = new BuildRequests(this.axiosInstance);
     this.executions = new ExecutionRequests(this.axiosInstance);
     this.screenshots = new ScreenshotRequests(this.axiosInstance);
-  }
-
-  public setBaseUrl(baseUrl: string) {
-    this.apiConfig.baseURL = baseUrl;
-    this.axiosInstance = axios.create(this.apiConfig);
   }
 
   public static getInstance(): AnglesReporterClass {
@@ -90,10 +95,10 @@ export class AnglesReporterClass {
     this.currentExecution.suite = suite;
     this.currentExecution.build = this.currentBuild._id;
     this.currentExecution.actions = [];
+    this.currentAction = undefined;
   }
 
-  public async saveTest() {
-    this.currentAction = undefined;
+  public async saveTest(): Promise<Execution> {
     return await this.executions.saveExecution(this.currentExecution);
   }
 
@@ -108,7 +113,7 @@ export class AnglesReporterClass {
   ): Promise<Screenshot> {
     const storeScreenshot = new StoreScreenshot();
     storeScreenshot.buildId = this.currentBuild._id;
-    storeScreenshot.filePath = filePath;
+    storeScreenshot.filePath =  path.resolve(filePath);
     storeScreenshot.view = view;
     storeScreenshot.timestamp = new Date();
     try {
@@ -123,6 +128,9 @@ export class AnglesReporterClass {
     this.currentAction.name = name;
     this.currentAction.start = new Date();
     this.currentAction.steps = [];
+    if (this.currentExecution === undefined) {
+      this.startTest("Set-up", "Set-up");
+    }
     this.currentExecution.actions.push(this.currentAction);
   }
 
