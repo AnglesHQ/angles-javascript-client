@@ -54,6 +54,14 @@ export class AnglesReporterClass {
     this.instantiateAxios();
   }
 
+  /**
+   * If the current build at a seperate point, then you can set it again by calling this function.
+   * @param buildId
+   */
+  public async setCurrentBuild(buildId:string) {
+    this.currentBuild = await this.builds.getBuild(buildId);
+  }
+
   private instantiateAxios():void {
     this.axiosInstance = axios.create(this.apiConfig);
     this.teams = new TeamRequests(this.axiosInstance);
