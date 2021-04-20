@@ -4,7 +4,8 @@ import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Screenshot';
 import { StoreScreenshot } from '../models/requests/StoreScreenshot';
 import { ScreenshotPlatform } from '../models/requests/ScreenshotPlatform';
-import { ScreenshotDetails } from '../models/ScreenshotDetails';
+import { UpdateScreenshot } from '../models/requests/UpdateScreenshot';
+import {StoreScreenshotHeaders} from "../models/requests/StoreScreenshotHeaders";
 
 export class ScreenshotRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -16,25 +17,23 @@ export class ScreenshotRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async saveScreenshot(storeScreenshot: StoreScreenshot, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
+  public async saveScreenshot(storeScreenshot: StoreScreenshot, storeScreenshotHeaders: StoreScreenshotHeaders): Promise<Screenshot> {
     const formData = new FormData();
     const fullPath = this.path.resolve(storeScreenshot.filePath);
     const fileStream = this.fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream);
-    if (screenshotDetails !== undefined) {
-      if (screenshotDetails.platform !== undefined) {
-        Object.entries(screenshotDetails.platform).forEach(([key, value]) => {
-          formData.append(key, value);
-        });
-      }
-      if (screenshotDetails.tags !== undefined) {
-        formData.append('tags', screenshotDetails.tags.toString());
-      }
+    if (storeScreenshot.platform !== undefined) {
+      Object.entries(storeScreenshot.platform).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
+    if (storeScreenshot.tags !== undefined) {
+      formData.append('tags', storeScreenshot.tags.toString());
     }
     const headers = formData.getHeaders({
-      buildId: storeScreenshot.buildId,
-      view: storeScreenshot.view,
-      timestamp: storeScreenshot.timestamp.toISOString(),
+      buildId: storeScreenshotHeaders.buildId,
+      view: storeScreenshotHeaders.view,
+      timestamp: storeScreenshotHeaders.timestamp.toISOString(),
     });
     const response: AxiosResponse<Screenshot> = await this.axios.post<Screenshot>(`screenshot/`, formData, {
       headers,
@@ -42,7 +41,7 @@ export class ScreenshotRequests extends BaseRequests {
     return this.success(response);
   }
 
-  public async updateScreenshot(screenshotId: string, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
+  public async updateScreenshot(screenshotId: string, screenshotDetails: UpdateScreenshot): Promise<Screenshot> {
     const response: AxiosResponse<Screenshot> = await this.axios.put<Screenshot>(`screenshot/${screenshotId}`, screenshotDetails);
     return this.success(response);
   }

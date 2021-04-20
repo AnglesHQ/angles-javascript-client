@@ -16,7 +16,8 @@ import { StepStates } from './models/enum/StepStates';
 import { Step } from './models/Step';
 import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
 import { Execution } from './models/Execution';
-import {ScreenshotDetails} from "./models/ScreenshotDetails";
+import {UpdateScreenshot} from "./models/requests/UpdateScreenshot";
+import {StoreScreenshotHeaders} from "./models/requests/StoreScreenshotHeaders";
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -114,21 +115,22 @@ export class AnglesReporterClass {
   public async saveScreenshot(
     filePath: string,
     view: string,
-    screenshotDetails: ScreenshotDetails,
-  ): Promise<Screenshot> {
-    const storeScreenshot = new StoreScreenshot();
-    storeScreenshot.buildId = this.currentBuild._id;
+    storeScreenshot: StoreScreenshot): Promise<Screenshot> {
+    const storeScreenshotHeaders = new StoreScreenshotHeaders();
+    storeScreenshotHeaders.buildId = this.currentBuild._id;
+    storeScreenshotHeaders.view = view;
+    storeScreenshotHeaders.timestamp = new Date();
+
     storeScreenshot.filePath =  path.resolve(filePath);
-    storeScreenshot.view = view;
-    storeScreenshot.timestamp = new Date();
+
     try {
-      return await this.screenshots.saveScreenshot(storeScreenshot, screenshotDetails);
+      return await this.screenshots.saveScreenshot(storeScreenshot, storeScreenshotHeaders);
     } catch (error) {
       this.error(error);
     }
   }
 
-  public async updateScreenshot(screenshotId: string, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
+  public async updateScreenshot(screenshotId: string, screenshotDetails: UpdateScreenshot): Promise<Screenshot> {
     return this.screenshots.updateScreenshot(screenshotId, screenshotDetails);
   }
 

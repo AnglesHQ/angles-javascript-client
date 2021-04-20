@@ -1,7 +1,6 @@
 import {ScreenshotPlatform} from "./ScreenshotPlatform";
 
-export class StoreScreenshot {
-  filePath: string;
+export class UpdateScreenshot {
   platform: ScreenshotPlatform;
   tags: string[];
 }
