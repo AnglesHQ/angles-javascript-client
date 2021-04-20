@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, {AxiosInstance, AxiosResponse} from 'axios';
 import path from 'path';
 import { TeamRequests } from './requests/TeamRequests';
 import { EnvironmentRequests } from './requests/EnvironmentRequests';
@@ -16,6 +16,7 @@ import { StepStates } from './models/enum/StepStates';
 import { Step } from './models/Step';
 import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
 import { Execution } from './models/Execution';
+import {ScreenshotDetails} from "./models/ScreenshotDetails";
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -110,14 +111,10 @@ export class AnglesReporterClass {
     return await this.executions.saveExecution(this.currentExecution);
   }
 
-  public async saveScreenshot(filePath: string, view: string): Promise<Screenshot> {
-    return await this.saveScreenshotWithPlatform(filePath, view, undefined);
-  }
-
-  public async saveScreenshotWithPlatform(
+  public async saveScreenshot(
     filePath: string,
     view: string,
-    platform: ScreenshotPlatform,
+    screenshotDetails: ScreenshotDetails,
   ): Promise<Screenshot> {
     const storeScreenshot = new StoreScreenshot();
     storeScreenshot.buildId = this.currentBuild._id;
@@ -125,10 +122,14 @@ export class AnglesReporterClass {
     storeScreenshot.view = view;
     storeScreenshot.timestamp = new Date();
     try {
-      return await this.screenshots.saveScreenshotWithPlatform(storeScreenshot, platform);
+      return await this.screenshots.saveScreenshot(storeScreenshot, screenshotDetails);
     } catch (error) {
       this.error(error);
     }
+  }
+
+  public async updateScreenshot(screenshotId: string, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
+    return this.screenshots.updateScreenshot(screenshotId, screenshotDetails);
   }
 
   public addAction(name: string) {

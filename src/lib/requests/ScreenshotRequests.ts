@@ -4,6 +4,7 @@ import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Screenshot';
 import { StoreScreenshot } from '../models/requests/StoreScreenshot';
 import { ScreenshotPlatform } from '../models/requests/ScreenshotPlatform';
+import { ScreenshotDetails } from '../models/ScreenshotDetails';
 
 export class ScreenshotRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -15,22 +16,20 @@ export class ScreenshotRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
-    return await this.saveScreenshotWithPlatform(storeScreenshot, undefined);
-  }
-
-  public async saveScreenshotWithPlatform(
-    storeScreenshot: StoreScreenshot,
-    platform: ScreenshotPlatform,
-  ): Promise<Screenshot> {
+  public async saveScreenshot(storeScreenshot: StoreScreenshot, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
     const formData = new FormData();
     const fullPath = this.path.resolve(storeScreenshot.filePath);
     const fileStream = this.fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream);
-    if (platform !== undefined) {
-      Object.entries(platform).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+    if (screenshotDetails !== undefined) {
+      if (screenshotDetails.platform !== undefined) {
+        Object.entries(screenshotDetails.platform).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
+      }
+      if (screenshotDetails.tags !== undefined) {
+        formData.append('tags', screenshotDetails.tags.toString());
+      }
     }
     const headers = formData.getHeaders({
       buildId: storeScreenshot.buildId,
@@ -40,6 +39,11 @@ export class ScreenshotRequests extends BaseRequests {
     const response: AxiosResponse<Screenshot> = await this.axios.post<Screenshot>(`screenshot/`, formData, {
       headers,
     });
+    return this.success(response);
+  }
+
+  public async updateScreenshot(screenshotId: string, screenshotDetails: ScreenshotDetails): Promise<Screenshot> {
+    const response: AxiosResponse<Screenshot> = await this.axios.put<Screenshot>(`screenshot/${screenshotId}`, screenshotDetails);
     return this.success(response);
   }
 
