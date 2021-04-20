@@ -113,15 +113,13 @@ export class AnglesReporterClass {
   }
 
   public async saveScreenshot(
-    filePath: string,
     view: string,
     storeScreenshot: StoreScreenshot): Promise<Screenshot> {
     const storeScreenshotHeaders = new StoreScreenshotHeaders();
     storeScreenshotHeaders.buildId = this.currentBuild._id;
     storeScreenshotHeaders.view = view;
     storeScreenshotHeaders.timestamp = new Date();
-
-    storeScreenshot.filePath =  path.resolve(filePath);
+    storeScreenshot.filePath =  path.resolve(storeScreenshot.filePath);
 
     try {
       return await this.screenshots.saveScreenshot(storeScreenshot, storeScreenshotHeaders);
