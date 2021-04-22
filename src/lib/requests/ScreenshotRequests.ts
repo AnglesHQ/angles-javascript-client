@@ -16,29 +16,22 @@ export class ScreenshotRequests extends BaseRequests {
   }
 
   public async saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
-    return await this.saveScreenshotWithPlatform(storeScreenshot, undefined);
-  }
-
-  public async saveScreenshotWithPlatform(
-    storeScreenshot: StoreScreenshot,
-    platform: ScreenshotPlatform,
-  ): Promise<Screenshot> {
     const formData = new FormData();
     const fullPath = this.path.resolve(storeScreenshot.filePath);
     const fileStream = this.fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream);
-    if (platform !== undefined) {
+    const { buildId, view, timestamp, tags , platform } = storeScreenshot;
+    formData.append("buildId", buildId);
+    formData.append("view", view);
+    formData.append("timestamp", timestamp.toISOString());
+    if (tags) formData.append("tags", JSON.stringify(tags));
+    if (platform) {
       Object.entries(platform).forEach(([key, value]) => {
         formData.append(key, value);
       });
     }
-    const headers = formData.getHeaders({
-      buildId: storeScreenshot.buildId,
-      view: storeScreenshot.view,
-      timestamp: storeScreenshot.timestamp.toISOString(),
-    });
     const response: AxiosResponse<Screenshot> = await this.axios.post<Screenshot>(`screenshot/`, formData, {
-      headers,
+      headers: formData.getHeaders(),
     });
     return this.success(response);
   }

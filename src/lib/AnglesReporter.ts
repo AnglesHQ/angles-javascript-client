@@ -88,7 +88,12 @@ export class AnglesReporterClass {
   }
 
   public async startBuild(name: string, team: string, environment: string, component: string): Promise<Build> {
-    const createBuildRequest = new CreateBuild(name, environment, team, component);
+    const createBuildRequest = new CreateBuild();
+    createBuildRequest.name = name;
+    createBuildRequest.team = team;
+    createBuildRequest.environment = environment;
+    createBuildRequest.component = component;
+    createBuildRequest.start = new Date();
     this.currentBuild = await this.builds.createBuild(createBuildRequest);
     return this.currentBuild;
   }
@@ -110,13 +115,14 @@ export class AnglesReporterClass {
     return await this.executions.saveExecution(this.currentExecution);
   }
 
-  public async saveScreenshot(filePath: string, view: string): Promise<Screenshot> {
-    return await this.saveScreenshotWithPlatform(filePath, view, undefined);
+  public async saveScreenshot(filePath: string, view: string, tags: string[]): Promise<Screenshot> {
+    return await this.saveScreenshotWithPlatform(filePath, view,  tags,undefined);
   }
 
   public async saveScreenshotWithPlatform(
     filePath: string,
     view: string,
+    tags: string[],
     platform: ScreenshotPlatform,
   ): Promise<Screenshot> {
     const storeScreenshot = new StoreScreenshot();
@@ -124,8 +130,10 @@ export class AnglesReporterClass {
     storeScreenshot.filePath =  path.resolve(filePath);
     storeScreenshot.view = view;
     storeScreenshot.timestamp = new Date();
+    storeScreenshot.tags = tags;
+    storeScreenshot.platform = platform;
     try {
-      return await this.screenshots.saveScreenshotWithPlatform(storeScreenshot, platform);
+      return await this.screenshots.saveScreenshot(storeScreenshot);
     } catch (error) {
       this.error(error);
     }
