@@ -42,7 +42,7 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v2
-        - run: git pull origin master
+      - run: git pull origin master
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v1
         with:
