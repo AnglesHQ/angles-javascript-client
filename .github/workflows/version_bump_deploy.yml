@@ -3,7 +3,7 @@ name: Node.js version bump and release
 on:
   push:
     branches:
-      - "master"
+      - main
 
 jobs:
   bump-version:
