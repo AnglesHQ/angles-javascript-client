@@ -154,6 +154,10 @@ export class AnglesReporterClass {
     this.addStep('INFO', undefined, undefined, info, StepStates.INFO, undefined);
   }
 
+  public debug(info: string) {
+    this.addStep('DEBUG', undefined, undefined, info, StepStates.DEBUG, undefined);
+  }
+
   public infoWithScreenshot(info: string, screenshotId: string) {
     this.addStep('INFO', undefined, undefined, info, StepStates.INFO, screenshotId);
   }
