@@ -141,7 +141,11 @@ export class AnglesReporterClass {
   }
 
   public async compareScreenshotAgainstBaseline(screenshotId: string) : Promise<ImageCompareResponse> {
-    return await this.screenshots.getBaselineCompare(screenshotId);
+    try {
+      return await this.screenshots.getBaselineCompare(screenshotId);
+    } catch (error) {
+      return undefined;
+    }
   }
 
   public addAction(name: string) {
