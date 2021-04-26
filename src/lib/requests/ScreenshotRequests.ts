@@ -4,6 +4,7 @@ import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Screenshot';
 import { StoreScreenshot } from '../models/requests/StoreScreenshot';
 import { ScreenshotPlatform } from '../models/requests/ScreenshotPlatform';
+import { ImageCompareResponse } from '../models/response/ImageCompareResponse';
 
 export class ScreenshotRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -113,8 +114,8 @@ export class ScreenshotRequests extends BaseRequests {
     return this.success(response);
   }
 
-  public async getBaselineCompare(screenshotId: string) : Promise<AxiosResponse> {
-    const response: AxiosResponse = await this.axios.get<AxiosResponse>(`screenshot/${screenshotId}/baseline/compare/`);
+  public async getBaselineCompare(screenshotId: string) : Promise<ImageCompareResponse> {
+    const response: AxiosResponse<ImageCompareResponse> = await this.axios.get<ImageCompareResponse>(`screenshot/${screenshotId}/baseline/compare/`);
     return this.success(response);
   }
 

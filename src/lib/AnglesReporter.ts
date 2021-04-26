@@ -16,6 +16,7 @@ import { StepStates } from './models/enum/StepStates';
 import { Step } from './models/Step';
 import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
 import { Execution } from './models/Execution';
+import { ImageCompareResponse } from './models/response/ImageCompareResponse';
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -137,6 +138,10 @@ export class AnglesReporterClass {
     } catch (error) {
       this.error(error);
     }
+  }
+
+  public async compareScreenshotAgainstBaseline(screenshotId: string) : Promise<ImageCompareResponse> {
+    return await this.screenshots.getBaselineCompare(screenshotId);
   }
 
   public addAction(name: string) {
