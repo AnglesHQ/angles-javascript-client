@@ -32,6 +32,7 @@
     "axios": "^0.21.1",
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
+    "moment": "^2.29.1",
     "path": "^0.12.7"
   },
   "devDependencies": {
