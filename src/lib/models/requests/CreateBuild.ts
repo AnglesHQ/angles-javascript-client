@@ -4,4 +4,5 @@ export class CreateBuild {
   component: string;
   name: string;
   start: Date;
+  phase: string;
 }

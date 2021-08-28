@@ -88,12 +88,14 @@ export class AnglesReporterClass {
     return AnglesReporterClass._instance;
   }
 
-  public async startBuild(name: string, team: string, environment: string, component: string): Promise<Build> {
+  public async startBuild(name: string, team: string, environment: string, component: string, phase: string): Promise<Build> {
     const createBuildRequest = new CreateBuild();
     createBuildRequest.name = name;
     createBuildRequest.team = team;
     createBuildRequest.environment = environment;
     createBuildRequest.component = component;
+    if (phase)
+      createBuildRequest.phase = phase;
     createBuildRequest.start = new Date();
     this.currentBuild = await this.builds.createBuild(createBuildRequest);
     return this.currentBuild;

@@ -25,31 +25,31 @@ await anglesReporter.startBuild('TestRunName', 'Team', 'Environment', 'Component
 const artifact = new Artifact('angles-ui', 'anglesHQ', '1.0.0');
 const artifactArray: Artifact[] = [];
 artifactArray.push(artifact);
-await reporter.addArtifacts(artifactArray);
+await anglesReporter.addArtifacts(artifactArray);
 
 // Called e.g. in the "before"
-reporter.startTest('test1', 'suite1');
+anglesReporter.startTest('test1', 'suite1');
 
 // This will group all the loging afterwards in this action
-reporter.addAction('My first action');
+anglesReporter.addAction('My first action');
 
 // Using the following two requests you can store your screenshots (with a view name and platform details)
 const platform = new ScreenshotPlatform('Android', '10', 'Chrome', '89.0', 'Samsung Galaxy S9');
-const screenshot = await reporter.saveScreenshotWithPlatform(
+const screenshot = await anglesReporter.saveScreenshotWithPlatform(
   '/path/to/your/screenshot.png',
   'view_1',
   platform,
 );
 
 // this will add your screenshot to the info and display a thumbnail.
-reporter.infoWithScreenshot('Checking my view on android', screenshot._id);
+anglesReporter.infoWithScreenshot('Checking my view on android', screenshot._id);
 
 // these methods don't do an assertion, but just report on the result (and change the state of the test run in Angles).
-reporter.pass('Assertion', 'true', 'true', 'Just doing an assertion');
-reporter.fail('Assertion', 'true', 'false', 'Just doing an assertion');
+anglesReporter.pass('Assertion', 'true', 'true', 'Just doing an assertion');
+anglesReporter.fail('Assertion', 'true', 'false', 'Just doing an assertion');
 
 // Needs to be called once the test is done to send it to the Angles Dashboard.
-await reporter.saveTest();
+await anglesReporter.saveTest();
 
 ```
 

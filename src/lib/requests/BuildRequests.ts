@@ -5,6 +5,7 @@ import { Build } from '../models/Build';
 import { Artifact } from '../models/Artifact';
 import { BuildsResponse } from '../models/response/BuildsResponse';
 import { DefaultResponse } from '../models/response/DefaultResponse';
+import moment from "moment";
 
 export class BuildRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -59,6 +60,31 @@ export class BuildRequests extends BaseRequests {
     return this.success(response);
   }
 
+  public async getBuildsWithDateFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, fromDate: Date, toDate: Date): Promise<BuildsResponse> {
+    let params:any = {
+      teamId,
+      skip,
+      limit,
+      fromDate: moment(fromDate).format('YYYY-MM-DD'),
+      toDate: moment(toDate).format('YYYY-MM-DD'),
+    };
+    if (filterEnvironments && filterEnvironments.length > 0) {
+      params = {
+        environmentIds: filterEnvironments.join(','),
+        ...params,
+      };
+    }
+    if (filterComponents && filterComponents.length > 0) {
+      params = {
+        componentIds: filterComponents.join(','),
+        ...params,
+      };
+    }
+    const response: AxiosResponse<BuildsResponse> = await this.axios.get<BuildsResponse>('/build', {
+      params,
+    });
+    return this.success(response);
+  }
   /**
    * This function will remove builds by age (including executions and screenshots).
    * NOTE: this can not be reversed, once deleted all builds and assets will have been removed.
