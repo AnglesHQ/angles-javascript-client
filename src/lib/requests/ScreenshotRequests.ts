@@ -43,9 +43,10 @@ export class ScreenshotRequests extends BaseRequests {
    * @param {number} [limit=100]
    */
   public async getScreenshotsForBuild(buildId: string, limit: number) : Promise<Screenshot[]> {
-    const defaultLimit = limit || 100;
+    const params:any = { buildId };
+    if (limit) { params.limit = limit; }
     const response: AxiosResponse<Screenshot[]> = await this.axios.get<Screenshot[]>(`screenshot/`, {
-      params: { buildId, limit: defaultLimit },
+      params,
     });
     return this.success(response);
   }
