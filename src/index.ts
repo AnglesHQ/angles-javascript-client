@@ -6,6 +6,16 @@ import { ScreenshotRequests } from './lib/requests/ScreenshotRequests';
 import { ExecutionRequests } from './lib/requests/ExecutionRequests';
 import { BaselineRequests} from './lib/requests/BaselineRequests';
 import { MetricRequests} from './lib/requests/MetricRequests';
+import { AnglesWDIOReporter } from './integrations/wdio/AnglesWDIOReporter'
 
-export { BuildRequests, TeamRequests, EnvironmentRequests, ScreenshotRequests, ExecutionRequests, BaselineRequests, MetricRequests };
+export {
+  BuildRequests,
+  TeamRequests,
+  EnvironmentRequests,
+  ScreenshotRequests,
+  ExecutionRequests,
+  BaselineRequests,
+  MetricRequests,
+  AnglesWDIOReporter
+};
 export default AnglesReporterClass.getInstance();
