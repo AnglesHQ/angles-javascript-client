@@ -30,7 +30,7 @@
   "homepage": "https://github.com/AnglesHQ/angles-javascript-client#readme",
   "dependencies": {
     "@wdio/spec-reporter": "^7.16.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "moment": "^2.29.1",

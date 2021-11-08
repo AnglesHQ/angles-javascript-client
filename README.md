@@ -72,7 +72,7 @@ To see more details about Angles Dashboard and e.g. how to set it up, have a loo
 #### WebDriverIO
 To integrate the Angles Dashboard with your webdriverIO test, we have set-up a customer reporter [AnglesWDIOReporter](/src/integrations/wdio/AnglesWDIOReporter.ts), which you can configure by adding the following custom reporter config to your **wdio.conf.ts** file. A full example of this can be found in our [webdriverio-example](https://github.com/AnglesHQ/webdriverio-example) project.
 
-```json
+```
 {
   reporters: [
     [
