@@ -1,6 +1,6 @@
 {
   "name": "angles-javascript-client",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "description": "This is the javascript client for the Angles Dashboard. It allows you to store your test results.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,9 +27,8 @@
   "bugs": {
     "url": "https://github.com/AnglesHQ/angles-javascript-client/issues"
   },
-  "homepage": "https://github.com/AnglesHQ/angles-javascript-client#readme",
+  "homepage": "https://angleshq.github.io",
   "dependencies": {
-    "@wdio/spec-reporter": "^7.16.3",
     "axios": "^0.21.2",
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",

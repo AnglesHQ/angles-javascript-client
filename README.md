@@ -66,36 +66,3 @@ const environmentRequests = new EnvironmentRequests(axios);
 ```
 
 To see more details about Angles Dashboard and e.g. how to set it up, have a look at our documentation on our [github](https://angleshq.github.io/) page.
-
-### Integrations
-
-#### WebDriverIO
-To integrate the Angles Dashboard with your webdriverIO test, we have set-up a customer reporter [AnglesWDIOReporter](/src/integrations/wdio/AnglesWDIOReporter.ts), which you can configure by adding the following custom reporter config to your **wdio.conf.ts** file. A full example of this can be found in our [webdriverio-example](https://github.com/AnglesHQ/webdriverio-example) project.
-
-```
-{
-  reporters: [
-    [
-      AnglesWDIOReporter,
-      {
-        enabled: true,
-        baseUrl: 'http://127.0.0.1:3000/rest/api/v1.0/',
-        reportingUrl: 'http://127.0.0.1:3001',
-        team: 'angles',
-        environment: 'qa',
-        component: 'wdio-example',
-        phase: 'crossbrowser',
-        artifacts: [
-          {
-            groupId: 'anglesHQ',
-            artifactId: 'angles-ui',
-            version: '1.0.0'
-          }
-        ]
-      }
-    ]
-  ]
-}
-```
-
-More integration examples to come.

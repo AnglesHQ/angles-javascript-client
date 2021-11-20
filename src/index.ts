@@ -6,7 +6,6 @@ import { ScreenshotRequests } from './lib/requests/ScreenshotRequests';
 import { ExecutionRequests } from './lib/requests/ExecutionRequests';
 import { BaselineRequests} from './lib/requests/BaselineRequests';
 import { MetricRequests} from './lib/requests/MetricRequests';
-import { AnglesWDIOReporter } from './integrations/wdio/AnglesWDIOReporter'
 
 export {
   BuildRequests,
@@ -15,7 +14,6 @@ export {
   ScreenshotRequests,
   ExecutionRequests,
   BaselineRequests,
-  MetricRequests,
-  AnglesWDIOReporter
+  MetricRequests
 };
 export default AnglesReporterClass.getInstance();
