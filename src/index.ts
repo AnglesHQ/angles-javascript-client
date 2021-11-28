@@ -6,6 +6,7 @@ import { ScreenshotRequests } from './lib/requests/ScreenshotRequests';
 import { ExecutionRequests } from './lib/requests/ExecutionRequests';
 import { BaselineRequests} from './lib/requests/BaselineRequests';
 import { MetricRequests} from './lib/requests/MetricRequests';
+import { AnglesRequests } from './lib/requests/AnglesRequests'
 
 export {
   BuildRequests,
@@ -14,6 +15,7 @@ export {
   ScreenshotRequests,
   ExecutionRequests,
   BaselineRequests,
-  MetricRequests
+  MetricRequests,
+  AnglesRequests
 };
 export default AnglesReporterClass.getInstance();
