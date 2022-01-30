@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
         run: cat ./package.json
-      - name:  'Output Step'
+      - name: "Output Step"
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
@@ -58,3 +58,7 @@ jobs:
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "publish release notes"
+        uses: fregante/release-with-changelog@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
