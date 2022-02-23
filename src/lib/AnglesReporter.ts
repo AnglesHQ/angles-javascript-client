@@ -17,6 +17,7 @@ import { Step } from './models/Step';
 import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
 import { Execution } from './models/Execution';
 import { ImageCompareResponse } from './models/response/ImageCompareResponse';
+import {Platform} from "./models/Platform";
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -111,7 +112,14 @@ export class AnglesReporterClass {
     this.currentExecution.suite = suite;
     this.currentExecution.build = this.currentBuild._id;
     this.currentExecution.actions = [];
+    this.currentExecution.platforms = [];
     this.currentAction = undefined;
+  }
+
+  public storePlatformDetails(platform: Platform): void {
+    if (this.currentExecution) {
+      this.currentExecution.platforms.push(platform);
+    }
   }
 
   public async saveTest(): Promise<Execution> {
