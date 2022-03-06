@@ -16,8 +16,18 @@ export class BuildRequests extends BaseRequests {
   }
 
   public async createBuild(request: CreateBuild): Promise<Build> {
-    const response: AxiosResponse<Build> = await this.axios.post<Build>(`build`, request);
-    return this.success(response);
+    return this.axios.post<Build>(`build`, request)
+      .then((response: AxiosResponse<Build>) => {
+        return this.success(response);
+      })
+      .catch((error) => {
+        const { response } = error;
+        if (response && response.data) {
+          throw new Error(error.response.data.message);
+        } else {
+          throw new Error(error);
+        }
+      })
   }
 
   /**
