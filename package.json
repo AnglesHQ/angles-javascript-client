@@ -1,6 +1,6 @@
 {
   "name": "angles-javascript-client",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "This is the javascript client for the Angles Dashboard. It allows you to store your test results.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
