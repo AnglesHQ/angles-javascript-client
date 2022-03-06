@@ -15,17 +15,21 @@ export class BuildRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
+  private ifSet(object: any , path: string) {
+    return path.split('.').reduce((obj, part) => obj && obj[part], object)
+  }
+
   public async createBuild(request: CreateBuild): Promise<Build> {
     return this.axios.post<Build>(`build`, request)
       .then((response: AxiosResponse<Build>) => {
         return this.success(response);
       })
       .catch((error) => {
-        const { response } = error;
-        if (response && response.data) {
-          throw new Error(error.response.data.message);
+        const { response, message } = error;
+        if (this.ifSet(response, 'data.message')) {
+          throw new Error(response.data.message);
         } else {
-          throw new Error(error);
+          throw new Error(message);
         }
       })
   }
