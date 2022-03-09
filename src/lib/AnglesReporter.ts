@@ -116,6 +116,14 @@ export class AnglesReporterClass {
     this.currentAction = undefined;
   }
 
+  public updateTestName(title: string, suite: string): void {
+    if (this.currentExecution) {
+      this.currentExecution.title = title;
+      if (suite)
+        this.currentExecution.suite = suite;
+    }
+  }
+
   public storePlatformDetails(platform: Platform): void {
     if (this.currentExecution) {
       this.currentExecution.platforms.push(platform);
