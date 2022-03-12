@@ -1,4 +1,4 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import {AxiosResponse, AxiosInstance, AxiosError} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import {Versions} from "../models/Versions";
 
@@ -10,9 +10,14 @@ export class AnglesRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async getVersions(): Promise<Versions> {
-    const response: AxiosResponse<Versions> = await this.axios.get<Versions>(`angles/versions`);
-    return this.success(response);
+  public getVersions(): Promise<Versions> {
+    return this.axios.get<Versions>(`angles/versions`)
+      .then((response: AxiosResponse<Versions>) => {
+        return this.success(response)
+      })
+      .catch((error: AxiosError)=> {
+        return Promise.reject(error);
+      });
   }
 
 }

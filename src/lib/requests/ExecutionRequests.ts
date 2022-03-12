@@ -1,8 +1,9 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import {AxiosResponse, AxiosInstance, AxiosError} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { Execution } from '../models/Execution';
 import { CreateExecution } from '../models/requests/CreateExecution';
 import { ExecutionResponse } from '../models/response/ExecutionResponse';
+import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class ExecutionRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -12,25 +13,48 @@ export class ExecutionRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async saveExecution(saveExecutionRequest: CreateExecution): Promise<Execution> {
-    const response: AxiosResponse<Execution> = await this.axios.post<Execution>(`execution/`, saveExecutionRequest);
-    return this.success(response);
+  public saveExecution(saveExecutionRequest: CreateExecution): Promise<Execution> {
+    return this.axios.post<Execution>(`execution/`, saveExecutionRequest)
+      .then((response: AxiosResponse<Execution>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
   // TODO: Get executions (with buildId or executionIds)
 
-  public async getExecution(executionId: string): Promise<Execution> {
-    const response: AxiosResponse<Execution> = await this.axios.get<Execution>(`execution/${executionId}`);
-    return this.success(response);
+  public getExecution(executionId: string): Promise<Execution> {
+    return this.axios.get<Execution>(`execution/${executionId}`)
+      .then((response: AxiosResponse<Execution>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
-  // TODO: Delete execution
+  public deleteExecution(executionId: string): Promise<DefaultResponse> {
+    return this.axios.delete<DefaultResponse>(`execution/${executionId}`)
+      .then((response: AxiosResponse<DefaultResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
+  }
 
   // TODO: Update execution
 
-  public async getExecutionHistory(executionId: string, skip: number, limit: number): Promise<ExecutionResponse> {
-    const response: AxiosResponse<ExecutionResponse> = await this.axios.get<ExecutionResponse>(`execution/${executionId}/history?&skip=${skip}&limit=${limit}`);
-    return this.success(response);
+  public getExecutionHistory(executionId: string, skip: number, limit: number): Promise<ExecutionResponse> {
+    return this.axios.get<ExecutionResponse>(`execution/${executionId}/history?&skip=${skip}&limit=${limit}`)
+      .then((response: AxiosResponse<ExecutionResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
   // TODO: Update execution with platforms

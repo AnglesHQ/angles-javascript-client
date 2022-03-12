@@ -1,8 +1,9 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import {AxiosResponse, AxiosInstance, AxiosError} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { Baseline } from '../models/Baseline';
 import { Screenshot } from '../models/Screenshot';
 import { IgnoreBox } from '../models/IgnoreBox';
+import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class BaselineRequests extends BaseRequests {
   private axios: AxiosInstance;
@@ -12,16 +13,21 @@ export class BaselineRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async setBaseline(screenshot:Screenshot): Promise<Baseline> {
+  public setBaseline(screenshot:Screenshot): Promise<Baseline> {
     const { view, _id: screenshotId } = screenshot;
-    const response: AxiosResponse<Baseline> = await this.axios.post<Baseline>(`baseline`, {
-      view,
-      screenshotId,
-    });
-    return this.success(response);
+    return this.axios.post<Baseline>(`baseline`, {
+        view,
+        screenshotId,
+      })
+      .then((response: AxiosResponse<Baseline>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
-  public async getBaselineForScreenshot(screenshot: Screenshot): Promise<Baseline[]> {
+  public getBaselineForScreenshot(screenshot: Screenshot): Promise<Baseline[]> {
     const { view, height:screenHeight, width:screenWidth, platform: { platformName, deviceName, browserName}} = screenshot;
     let params:any = { view, platformName };
     if (deviceName) {
@@ -29,23 +35,46 @@ export class BaselineRequests extends BaseRequests {
     } else {
       params = { browserName, screenHeight, screenWidth, ...params}
     }
-    const response: AxiosResponse<Baseline[]> = await this.axios.get<Baseline[]>(`baseline/`, {
-      params
-    });
-    return this.success(response);
+    return this.axios.get<Baseline[]>(`baseline/`, {
+        params
+      })
+      .then((response: AxiosResponse<Baseline[]>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
-  public async getBaselines(): Promise<Baseline[]> {
-    const response: AxiosResponse<Baseline[]> = await this.axios.get<Baseline[]>(`baseline`);
-    return this.success(response);
+  public getBaselines(): Promise<Baseline[]> {
+    return this.axios.get<Baseline[]>(`baseline`)
+      .then((response: AxiosResponse<Baseline[]>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
-  public async getBaseline(baselineId: string): Promise<Baseline> {
-    const response: AxiosResponse<Baseline> = await this.axios.get<Baseline>(`baseline/${baselineId}`);
-    return this.success(response);
+  public getBaseline(baselineId: string): Promise<Baseline> {
+    return this.axios.get<Baseline>(`baseline/${baselineId}`)
+      .then((response: AxiosResponse<Baseline>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error)
+      });
   }
 
-  // TODO: Delete baseline.
+  public deleteBaseline(baselineId: string): Promise<DefaultResponse> {
+    return this.axios.delete<DefaultResponse>(`baseline/${baselineId}`)
+      .then((response: AxiosResponse<DefaultResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
+  }
 
   /**
    *
@@ -53,7 +82,7 @@ export class BaselineRequests extends BaseRequests {
    * @param {string} [screenshotId] the new screenshot you want to set as the baseline.
    * @param {IgnoreBox[]} [ignoreBoxes] the ignoreboxes you want to set for the baseline.
    */
-  public async updateBaseline(baselineId: string, screenshotId: string, ignoreBoxes: IgnoreBox[]): Promise<Baseline> {
+  public updateBaseline(baselineId: string, screenshotId: string, ignoreBoxes: IgnoreBox[]): Promise<Baseline> {
     let updateBaselineRequest:any = {};
     if (screenshotId) {
       updateBaselineRequest = { screenshotId, ...updateBaselineRequest };
@@ -61,7 +90,12 @@ export class BaselineRequests extends BaseRequests {
     if (ignoreBoxes) {
       updateBaselineRequest = { ignoreBoxes, ...updateBaselineRequest };
     }
-    const response: AxiosResponse<Baseline> = await this.axios.put<Baseline>(`baseline/${baselineId}`, updateBaselineRequest);
-    return this.success(response);
+    return this.axios.put<Baseline>(`baseline/${baselineId}`, updateBaselineRequest)
+      .then((response: AxiosResponse<Baseline>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 }

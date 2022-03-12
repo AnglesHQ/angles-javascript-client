@@ -1,4 +1,4 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import {AxiosResponse, AxiosInstance, AxiosError} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { Team } from '../models/Team';
 import { CreateTeam } from '../models/requests/CreateTeam';
@@ -17,26 +17,41 @@ export class TeamRequests extends BaseRequests {
    *
    * @param {CreateTeam} request - contains the details for the team you want to create.
    */
-  public async createTeam(request: CreateTeam): Promise<Team> {
-    const response: AxiosResponse<Team> = await this.axios.post<Team>(`team`, request);
-    return this.success(response);
+  public createTeam(request: CreateTeam): Promise<Team> {
+    return this.axios.post<Team>(`team`, request)
+      .then((response: AxiosResponse<Team>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
   /**
    * Retrieves all the available teams.
    */
-  public async getTeams(): Promise<Team[]> {
-    const response: AxiosResponse<Team[]> = await this.axios.get<Team[]>(`team`);
-    return this.success(response);
+  public getTeams(): Promise<Team[]> {
+    return this.axios.get<Team[]>(`team`)
+      .then((response: AxiosResponse<Team[]>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
   /**
    * Retrieves a specific team based on teh id.
    * @param {string} teamId - id of the team you want to retrieve.
    */
-  public async getTeam(teamId: string): Promise<Team> {
-    const response: AxiosResponse<Team> = await this.axios.get<Team>(`team/${teamId}`);
-    return this.success(response);
+  public getTeam(teamId: string): Promise<Team> {
+    return this.axios.get<Team>(`team/${teamId}`)
+      .then((response: AxiosResponse<Team>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
   /**
@@ -46,8 +61,13 @@ export class TeamRequests extends BaseRequests {
    * @param {string} teamId - id of the team you want to delete.
    */
   public async deleteTeam(teamId: string): Promise<DefaultResponse> {
-    const response: AxiosResponse<DefaultResponse> = await this.axios.delete<DefaultResponse>(`team/${teamId}`);
-    return this.success(response);
+    return this.axios.delete<DefaultResponse>(`team/${teamId}`)
+      .then((response: AxiosResponse<DefaultResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
   /**
@@ -57,10 +77,15 @@ export class TeamRequests extends BaseRequests {
    * @param {string} name - new name you want to set for the team
    */
   public async updateTeam(teamId: string, name: string): Promise<Team> {
-    const response: AxiosResponse<Team> = await this.axios.put<Team>(`team/${teamId}`, {
-      name,
-    });
-    return this.success(response);
+    return this.axios.put<Team>(`team/${teamId}`, {
+        name,
+      })
+      .then((response: AxiosResponse<Team>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
   /**
@@ -71,10 +96,15 @@ export class TeamRequests extends BaseRequests {
    * @param {string[]} components - list of components you want to add.
    */
   public async addComponentsToTeam(teamId: string, components: string[]): Promise<Team> {
-    const response: AxiosResponse<Team> = await this.axios.put<Team>(`team/${teamId}`, {
+    return this.axios.put<Team>(`team/${teamId}`, {
       components,
-    });
-    return this.success(response);
+    })
+      .then((response: AxiosResponse<Team>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
 }

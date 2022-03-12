@@ -15,7 +15,7 @@ export class BuildRequests extends BaseRequests {
     this.axios = axiosInstance;
   }
 
-  public async createBuild(request: CreateBuild): Promise<Build> {
+  public createBuild(request: CreateBuild): Promise<Build> {
     return this.axios.post<Build>(`build`, request)
       .then((response: AxiosResponse<Build>) => {
         return this.success(response);
@@ -33,20 +33,31 @@ export class BuildRequests extends BaseRequests {
    * @param {string[]=} buildIds
    * @param {boolean} [returnExecutionDetails=false]
    */
-  public async getBuilds(teamId:string, buildIds: string[], returnExecutionDetails: boolean): Promise<BuildsResponse> {
+  public getBuilds(teamId:string, buildIds: string[], returnExecutionDetails: boolean): Promise<BuildsResponse> {
     let requestPath = `/build?teamId=${teamId}`;
     if (buildIds) requestPath += `&buildIds=${buildIds.join(',')}`;
     if (returnExecutionDetails) requestPath += `&returnExecutionDetails=${returnExecutionDetails}`;
-    const response: AxiosResponse<BuildsResponse> = await this.axios.get<BuildsResponse>(requestPath);
-    return this.success(response);
+    return this.axios.get<BuildsResponse>(requestPath)
+      .then((response: AxiosResponse<BuildsResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
-  public async getBuildsWithFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number): Promise<BuildsResponse> {
+  public getBuildsWithFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number): Promise<BuildsResponse> {
+    return this.getBuildsWithDateFilters(teamId, filterEnvironments, filterComponents, skip, limit, undefined, undefined);
+  }
+
+  public getBuildsWithDateFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, fromDate: Date, toDate: Date): Promise<BuildsResponse> {
     let params:any = {
       teamId,
       skip,
       limit,
     };
+    if (fromDate) { params = { fromDate: moment(fromDate).format('YYYY-MM-DD'), ...params }};
+    if (toDate) { params = { toDate: moment(toDate).format('YYYY-MM-DD'), ...params }};
     if (filterEnvironments && filterEnvironments.length > 0) {
       params = {
         environmentIds: filterEnvironments.join(','),
@@ -59,36 +70,15 @@ export class BuildRequests extends BaseRequests {
         ...params,
       };
     }
-    const response: AxiosResponse<BuildsResponse> = await this.axios.get<BuildsResponse>('/build', {
-      params,
-    });
-    return this.success(response);
-  }
-
-  public async getBuildsWithDateFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, fromDate: Date, toDate: Date): Promise<BuildsResponse> {
-    let params:any = {
-      teamId,
-      skip,
-      limit,
-      fromDate: moment(fromDate).format('YYYY-MM-DD'),
-      toDate: moment(toDate).format('YYYY-MM-DD'),
-    };
-    if (filterEnvironments && filterEnvironments.length > 0) {
-      params = {
-        environmentIds: filterEnvironments.join(','),
-        ...params,
-      };
-    }
-    if (filterComponents && filterComponents.length > 0) {
-      params = {
-        componentIds: filterComponents.join(','),
-        ...params,
-      };
-    }
-    const response: AxiosResponse<BuildsResponse> = await this.axios.get<BuildsResponse>('/build', {
-      params,
-    });
-    return this.success(response);
+    return this.axios.get<BuildsResponse>('/build', {
+        params,
+      })
+      .then((response: AxiosResponse<BuildsResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
   /**
    * This function will remove builds by age (including executions and screenshots).
@@ -98,46 +88,68 @@ export class BuildRequests extends BaseRequests {
    * @param {number} ageInDays - age in number of days you want to remove the builds for. e.g. 90 will
    * remove any builds over 90 days old.
    */
-  public async deleteBuilds(teamId: string, ageInDays: number): Promise<DefaultResponse> {
-    const response: AxiosResponse<DefaultResponse> = await this.axios.delete<DefaultResponse>(`build`, {
-      params: {
-        teamId,
-        ageInDays,
-      }
-    });
-    return this.success(response);
+  public deleteBuilds(teamId: string, ageInDays: number): Promise<DefaultResponse> {
+    return this.axios.delete<DefaultResponse>(`build`, {
+        params: {
+          teamId,
+          ageInDays,
+        }
+      })
+      .then((response: AxiosResponse<DefaultResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
-  public async getBuild(buildId: string): Promise<Build> {
-    const response: AxiosResponse<Build> = await this.axios.get<Build>(`build/${buildId}`);
-    return this.success(response);
+  public getBuild(buildId: string): Promise<Build> {
+    return this.axios.get<Build>(`build/${buildId}`)
+      .then((response: AxiosResponse<Build>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
-  public async deleteBuild(buildId: string): Promise<DefaultResponse> {
-    const response: AxiosResponse<DefaultResponse> = await this.axios.delete<DefaultResponse>(`build/${buildId}`);
-    return this.success(response);
+  public deleteBuild(buildId: string): Promise<DefaultResponse> {
+    return this.axios.delete<DefaultResponse>(`build/${buildId}`)
+      .then((response: AxiosResponse<DefaultResponse>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
   // TODO: Update build
 
-  public async setKeep(buildId: string, keep: boolean): Promise<Build> {
-    const response: AxiosResponse<Build> = await this.axios.put<Build>(`build/${buildId}/keep`, { keep });
-    return this.success(response);
+  public setKeep(buildId: string, keep: boolean): Promise<Build> {
+    return this.axios.put<Build>(`build/${buildId}/keep`, { keep })
+      .then((response: AxiosResponse<Build>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      })
   }
 
-  public async addArtifacts(buildId: string, artifacts: Artifact[]): Promise<Build> {
-    const response: AxiosResponse<Build> = await this.axios.put<Build>(
-      `build/${buildId}/artifacts`,
-      {
-        artifacts,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
+  public addArtifacts(buildId: string, artifacts: Artifact[]): Promise<Build> {
+    return this.axios.put<Build>(`build/${buildId}/artifacts`,
+  { artifacts },
+ {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
-    return this.success(response);
+      )
+      .then((response: AxiosResponse<Build>) => {
+        return this.success(response);
+      })
+      .catch((error: AxiosError) => {
+        return Promise.reject(error);
+      });
   }
 
 }
