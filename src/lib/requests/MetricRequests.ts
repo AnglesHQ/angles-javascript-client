@@ -1,15 +1,13 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import { AxiosInstance } from 'axios';
 import moment from 'moment';
 import { BaseRequests } from './BaseRequests';
 import {GroupingPeriods} from "../models/enum/GroupingPeriods";
 import {PhaseMetrics} from "../models/response/PhaseMetrics";
 
 export class MetricRequests extends BaseRequests {
-  private axios: AxiosInstance;
 
   public constructor(axiosInstance: AxiosInstance) {
-    super();
-    this.axios = axiosInstance;
+    super(axiosInstance);
   }
 
   /**
@@ -21,13 +19,12 @@ export class MetricRequests extends BaseRequests {
    * @param toDate
    * @param groupingPeriod
    */
-  public async getPhaseMetrics(teamId: string, componentId: string, fromDate: Date, toDate: Date, groupingPeriod: GroupingPeriods): Promise<PhaseMetrics> {
+  public getPhaseMetrics(teamId: string, componentId: string, fromDate: Date, toDate: Date, groupingPeriod: GroupingPeriods): Promise<PhaseMetrics> {
     const url = new URL(this.axios.defaults.baseURL + `/metrics/phase?teamId=${teamId}`);
     if (componentId) { url.searchParams.append('componentId', componentId); }
     if (fromDate) { url.searchParams.append('fromDate', moment(fromDate).format('YYYY-MM-DD')); }
     if (toDate) { url.searchParams.append('toDate', moment(toDate).format('YYYY-MM-DD')); }
     if (groupingPeriod) { url.searchParams.append('groupingPeriod', groupingPeriod); }
-    const response: AxiosResponse<PhaseMetrics> = await this.axios.get<PhaseMetrics>(url.toString());
-    return this.success(response);
+    return this.get<PhaseMetrics>(url.toString());
   }
 }
