@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, {AxiosError, AxiosInstance} from 'axios';
 import path from 'path';
 import { TeamRequests } from './requests/TeamRequests';
 import { EnvironmentRequests } from './requests/EnvironmentRequests';
@@ -61,7 +61,13 @@ export class AnglesReporterClass {
    * @param buildId
    */
   public async setCurrentBuild(buildId:string) {
-    this.currentBuild = await this.builds.getBuild(buildId);
+    await this.builds.getBuild(buildId)
+      .then((build) => {
+        this.currentBuild = build;
+      })
+      .catch((error: AxiosError) => {
+        throw new Error(`Error: Unable to set current build with id ${buildId}`);
+      });
   }
 
   private instantiateAxios():void {
@@ -98,12 +104,20 @@ export class AnglesReporterClass {
     if (phase)
       createBuildRequest.phase = phase;
     createBuildRequest.start = new Date();
-    this.currentBuild = await this.builds.createBuild(createBuildRequest);
-    return this.currentBuild;
+    return new Promise((resolve, reject) => {
+      this.builds.createBuild(createBuildRequest)
+        .then((createdBuild) => {
+          this.currentBuild = createdBuild;
+          resolve(createdBuild);
+        })
+        .catch((error) => {
+          reject(error);
+        })
+    });
   }
 
-  public async addArtifacts(artifacts: Artifact[]): Promise<Build> {
-    return await this.builds.addArtifacts(this.currentBuild._id, artifacts);
+  public addArtifacts(artifacts: Artifact[]): Promise<Build> {
+    return this.builds.addArtifacts(this.currentBuild._id, artifacts);
   }
 
   public startTest(title: string, suite: string): void {
@@ -130,15 +144,15 @@ export class AnglesReporterClass {
     }
   }
 
-  public async saveTest(): Promise<Execution> {
-    return await this.executions.saveExecution(this.currentExecution);
+  public saveTest(): Promise<Execution> {
+    return this.executions.saveExecution(this.currentExecution);
   }
 
-  public async saveScreenshot(filePath: string, view: string, tags: string[]): Promise<Screenshot> {
-    return await this.saveScreenshotWithPlatform(filePath, view,  tags,undefined);
+  public saveScreenshot(filePath: string, view: string, tags: string[]): Promise<Screenshot> {
+    return this.saveScreenshotWithPlatform(filePath, view,  tags,undefined);
   }
 
-  public async saveScreenshotWithPlatform(
+  public saveScreenshotWithPlatform(
     filePath: string,
     view: string,
     tags: string[],
@@ -151,19 +165,11 @@ export class AnglesReporterClass {
     storeScreenshot.timestamp = new Date();
     storeScreenshot.tags = tags;
     storeScreenshot.platform = platform;
-    try {
-      return await this.screenshots.saveScreenshot(storeScreenshot);
-    } catch (error) {
-      this.error(error);
-    }
+    return this.screenshots.saveScreenshot(storeScreenshot);
   }
 
-  public async compareScreenshotAgainstBaseline(screenshotId: string) : Promise<ImageCompareResponse> {
-    try {
-      return await this.screenshots.getBaselineCompare(screenshotId);
-    } catch (error) {
-      return undefined;
-    }
+  public compareScreenshotAgainstBaseline(screenshotId: string) : Promise<ImageCompareResponse> {
+    return this.screenshots.getBaselineCompare(screenshotId);
   }
 
   public addAction(name: string) {

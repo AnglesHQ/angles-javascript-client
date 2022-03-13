@@ -1,36 +1,33 @@
-import { AxiosResponse, AxiosInstance } from 'axios';
+import { AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { Execution } from '../models/Execution';
 import { CreateExecution } from '../models/requests/CreateExecution';
 import { ExecutionResponse } from '../models/response/ExecutionResponse';
+import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class ExecutionRequests extends BaseRequests {
-  private axios: AxiosInstance;
 
   public constructor(axiosInstance: AxiosInstance) {
-    super();
-    this.axios = axiosInstance;
+    super(axiosInstance);
   }
 
-  public async saveExecution(saveExecutionRequest: CreateExecution): Promise<Execution> {
-    const response: AxiosResponse<Execution> = await this.axios.post<Execution>(`execution/`, saveExecutionRequest);
-    return this.success(response);
+  public saveExecution(saveExecutionRequest: CreateExecution): Promise<Execution> {
+    return this.post<Execution>(`execution/`, saveExecutionRequest);
   }
 
   // TODO: Get executions (with buildId or executionIds)
 
-  public async getExecution(executionId: string): Promise<Execution> {
-    const response: AxiosResponse<Execution> = await this.axios.get<Execution>(`execution/${executionId}`);
-    return this.success(response);
+  public getExecution(executionId: string): Promise<Execution> {
+    return this.get<Execution>(`execution/${executionId}`);
   }
 
-  // TODO: Delete execution
-
+  public deleteExecution(executionId: string): Promise<DefaultResponse> {
+    return this.delete<DefaultResponse>(`execution/${executionId}`);
+  }
   // TODO: Update execution
 
-  public async getExecutionHistory(executionId: string, skip: number, limit: number): Promise<ExecutionResponse> {
-    const response: AxiosResponse<ExecutionResponse> = await this.axios.get<ExecutionResponse>(`execution/${executionId}/history?&skip=${skip}&limit=${limit}`);
-    return this.success(response);
+  public getExecutionHistory(executionId: string, skip: number, limit: number): Promise<ExecutionResponse> {
+    return this.get<ExecutionResponse>(`execution/${executionId}/history?&skip=${skip}&limit=${limit}`);
   }
 
   // TODO: Update execution with platforms
