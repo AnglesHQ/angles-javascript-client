@@ -60,14 +60,11 @@ export class AnglesReporterClass {
    * If the current build at a seperate point, then you can set it again by calling this function.
    * @param buildId
    */
-  public async setCurrentBuild(buildId:string) {
-    await this.builds.getBuild(buildId)
-      .then((build) => {
-        this.currentBuild = build;
-      })
-      .catch((error: AxiosError) => {
-        throw new Error(`Error: Unable to set current build with id ${buildId}`);
-      });
+  public setCurrentBuild(buildId:string) {
+      if (!this.currentBuild) {
+        this.currentBuild = new Build();
+      }
+      this.currentBuild._id = buildId;
   }
 
   private instantiateAxios():void {
