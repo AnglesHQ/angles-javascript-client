@@ -17,9 +17,6 @@ export class ScreenshotRequests extends BaseRequests {
 
   public saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
     const formData = new FormData();
-    const fullPath = this.path.resolve(storeScreenshot.filePath);
-    const fileStream = this.fs.createReadStream(fullPath);
-    formData.append('screenshot', fileStream);
     const { buildId, view, timestamp, tags , platform } = storeScreenshot;
     formData.append("buildId", buildId);
     formData.append("view", view);
@@ -30,6 +27,9 @@ export class ScreenshotRequests extends BaseRequests {
         formData.append(key, value);
       });
     }
+    const fullPath = this.path.resolve(storeScreenshot.filePath);
+    const fileStream = this.fs.createReadStream(fullPath);
+    formData.append('screenshot', fileStream);
     return this.post<Screenshot>(`screenshot/`, formData, {
       headers: formData.getHeaders(),
     });
