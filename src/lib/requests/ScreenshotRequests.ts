@@ -94,6 +94,14 @@ export class ScreenshotRequests extends BaseRequests {
       { responseType: 'arraybuffer' });
   }
 
+  public generateBaselineImage(screenshotId: string, numberOfImagesToCompare: number): Promise<Screenshot> {
+    let path = `screenshot/${screenshotId}/dynamic-baseline`;
+    if (numberOfImagesToCompare && numberOfImagesToCompare > 0) {
+      path = `${path}&numberOfImagesToCompare=${numberOfImagesToCompare}`
+    }
+    return this.get<Screenshot>(path);
+  }
+
   // TODO: Get screenshot compare Resemblejs JSON
 
   // TODO: get screenshot compare Resemblejs Image
