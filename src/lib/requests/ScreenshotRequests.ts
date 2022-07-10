@@ -97,7 +97,7 @@ export class ScreenshotRequests extends BaseRequests {
   public getDynamicBaselineImage(screenshotId: string, numberOfImagesToCompare: number): Promise<Screenshot> {
     let path = `screenshot/${screenshotId}/dynamic-baseline`;
     if (numberOfImagesToCompare && numberOfImagesToCompare > 0) {
-      path = `${path}&numberOfImagesToCompare=${numberOfImagesToCompare}`
+      path = `${path}?numberOfImagesToCompare=${numberOfImagesToCompare}`
     }
     return this.get<Screenshot>(path);
   }
