@@ -1,4 +1,4 @@
-import { AxiosInstance } from 'axios';
+import {AxiosInstance, AxiosResponse} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { CreateBuild } from '../models/requests/CreateBuild';
 import { Build } from '../models/Build';
@@ -98,6 +98,10 @@ export class BuildRequests extends BaseRequests {
 
   public getBuild(buildId: string): Promise<Build> {
     return this.get<Build>(`build/${buildId}`);
+  }
+
+  public getBuildReport(buildId: string): Promise<AxiosResponse> {
+    return this.get<AxiosResponse>(`build/${buildId}/report`);
   }
 
   public deleteBuild(buildId: string): Promise<DefaultResponse> {
