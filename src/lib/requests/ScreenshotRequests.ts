@@ -28,8 +28,9 @@ export class ScreenshotRequests extends BaseRequests {
       });
     }
     const fullPath = this.path.resolve(storeScreenshot.filePath);
+    const fileName = this.path.basename(fullPath);
     const fileStream = this.fs.createReadStream(fullPath);
-    formData.append('screenshot', fileStream);
+    formData.append('screenshot', fileStream, fileName);
     return this.post<Screenshot>(`screenshot/`, formData, {
       headers: formData.getHeaders(),
     });
