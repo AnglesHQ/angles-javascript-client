@@ -8,14 +8,13 @@ import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class ScreenshotRequests extends BaseRequests {
 
-  private path = require('path');
-  private fs = require('fs');
-
   public constructor(axiosInstance: AxiosInstance) {
     super(axiosInstance);
   }
 
   public saveScreenshot(storeScreenshot: StoreScreenshot): Promise<Screenshot> {
+    const path = require('path');
+    const fs = require('fs');
     const formData = new FormData();
     const { buildId, view, timestamp, tags , platform } = storeScreenshot;
     formData.append("buildId", buildId);
@@ -27,9 +26,9 @@ export class ScreenshotRequests extends BaseRequests {
         formData.append(key, value);
       });
     }
-    const fullPath = this.path.resolve(storeScreenshot.filePath);
-    const fileName = this.path.basename(fullPath);
-    const fileStream = this.fs.createReadStream(fullPath);
+    const fullPath = path.resolve(storeScreenshot.filePath);
+    const fileName = path.basename(fullPath);
+    const fileStream = fs.createReadStream(fullPath);
     formData.append('screenshot', fileStream, fileName);
     return this.post<Screenshot>(`screenshot/`, formData, {
       headers: formData.getHeaders(),
