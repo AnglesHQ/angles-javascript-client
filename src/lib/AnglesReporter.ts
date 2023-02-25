@@ -1,5 +1,4 @@
 import axios, {AxiosError, AxiosInstance} from 'axios';
-import path from 'path';
 import { TeamRequests } from './requests/TeamRequests';
 import { EnvironmentRequests } from './requests/EnvironmentRequests';
 import { BuildRequests } from './requests/BuildRequests';
@@ -155,6 +154,7 @@ export class AnglesReporterClass {
     tags: string[],
     platform: ScreenshotPlatform,
   ): Promise<Screenshot> {
+    const path = require('path');
     const storeScreenshot = new StoreScreenshot();
     storeScreenshot.buildId = this.currentBuild._id;
     storeScreenshot.filePath =  path.resolve(filePath);
