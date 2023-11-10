@@ -29,7 +29,7 @@
   },
   "homepage": "https://angleshq.github.io",
   "dependencies": {
-    "axios": "^0.21.2",
+    "axios": "^1.6.0",
     "form-data": "^4.0.0",
     "fs": "^0.0.1-security",
     "moment": "^2.29.2",
