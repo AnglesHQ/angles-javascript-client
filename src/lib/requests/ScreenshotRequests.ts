@@ -56,6 +56,24 @@ export class ScreenshotRequests extends BaseRequests {
     });
   }
 
+  public getScreenshotViews(view: string, limit: number) : Promise<string[]> {
+    return this.get<string[]>('screenshot/views', {
+      params: {
+        view,
+        limit,
+      }
+    });
+  }
+
+  public getScreenshotTags(tag: string, limit: number) : Promise<string[]> {
+    return this.get<string[]>('screenshot/tags', {
+      params: {
+        tag,
+        limit,
+      }
+    });
+  }
+
   public getScreenshotHistoryByView(view: string, platformId: string, limit: number, offset: number) : Promise<Screenshot[]> {
     return this.get('/screenshot/', {
       params: {

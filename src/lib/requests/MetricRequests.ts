@@ -3,6 +3,7 @@ import moment from 'moment';
 import { BaseRequests } from './BaseRequests';
 import {GroupingPeriods} from "../models/enum/GroupingPeriods";
 import {PhaseMetrics} from "../models/response/PhaseMetrics";
+import {ScreenshotMetrics} from "../models/response/ScreenshotMetrics";
 
 export class MetricRequests extends BaseRequests {
 
@@ -26,5 +27,22 @@ export class MetricRequests extends BaseRequests {
     if (toDate) { url.searchParams.append('toDate', moment(toDate).format('YYYY-MM-DD')); }
     if (groupingPeriod) { url.searchParams.append('groupingPeriod', groupingPeriod); }
     return this.get<PhaseMetrics>(url.toString());
+  }
+
+  /**
+   *  Will retrieve screenshot metrics grouped by tags and views.
+   *
+   * @param view
+   * @param tag
+   * @param limit
+   * @param thumbnail
+   */
+  public getScreenshotMetrics(view: string, tag: string, limit: number, thumbnail: boolean): Promise<ScreenshotMetrics> {
+    const url = new URL(this.axios.defaults.baseURL + `/metrics/screenshot?`);
+    if (view) { url.searchParams.append('view', view); }
+    if (tag) { url.searchParams.append('tag', tag); }
+    if (limit) { url.searchParams.append('limit', String(limit)); }
+    if (thumbnail) { url.searchParams.append('thumbnail', String(thumbnail)); }
+    return this.get<ScreenshotMetrics>(url.toString());
   }
 }
