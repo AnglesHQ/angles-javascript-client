@@ -7,6 +7,7 @@ import { ExecutionRequests } from './lib/requests/ExecutionRequests';
 import { BaselineRequests} from './lib/requests/BaselineRequests';
 import { MetricRequests} from './lib/requests/MetricRequests';
 import { AnglesRequests } from './lib/requests/AnglesRequests'
+import { KeyCloakService} from "./lib/services/KeyCloakService";
 
 export {
   BuildRequests,
@@ -16,6 +17,7 @@ export {
   ExecutionRequests,
   BaselineRequests,
   MetricRequests,
-  AnglesRequests
+  AnglesRequests,
+  KeyCloakService
 };
 export default AnglesReporterClass.getInstance();
