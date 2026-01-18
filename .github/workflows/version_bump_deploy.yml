@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout source code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v6"
         with:
           ref: ${{ github.ref }}
           fetch-depth: 50
       - name: "cat package.json"
         run: cat ./package.json
       - name: "Setup Node.js"
-        uses: "actions/setup-node@v1"
+        uses: "actions/setup-node@v6"
         with:
-          node-version: 12
+          node-version: 24
       - name: "Automated Version Bump"
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
@@ -38,6 +38,7 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
+        # deprecated
       - name: "publish release notes"
         uses: fregante/release-with-changelog@v3
         with:
@@ -50,12 +51,12 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - run: git pull origin main
       # Setup .npmrc file to publish to npm
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v6
         with:
-          node-version: 12
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm run build
