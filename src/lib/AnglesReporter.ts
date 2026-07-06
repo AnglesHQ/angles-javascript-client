@@ -56,6 +56,16 @@ export class AnglesReporterClass {
   }
 
   /**
+   * Configures the api key to be sent as the 'x-api-key' header on all requests.
+   * Generate a token via the Angles UI/API (POST /users/:userId/tokens) and pass the raw token string here.
+   * @param apiKey
+   */
+  public setApiKey(apiKey: string) {
+    (this.apiConfig.headers.common as any)['x-api-key'] = apiKey;
+    this.instantiateAxios();
+  }
+
+  /**
    * If the current build at a seperate point, then you can set it again by calling this function.
    * @param buildId
    */
