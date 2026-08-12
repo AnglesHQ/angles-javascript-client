@@ -4,6 +4,8 @@ import { BaseRequests } from './BaseRequests';
 import { Screenshot } from '../models/Screenshot';
 import { StoreScreenshot } from '../models/requests/StoreScreenshot';
 import { ImageCompareResponse } from '../models/response/ImageCompareResponse';
+import { ImageFindResponse } from '../models/response/ImageFindResponse';
+import { FindImageOptions } from '../models/requests/FindImageOptions';
 import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class ScreenshotRequests extends BaseRequests {
@@ -135,6 +137,49 @@ export class ScreenshotRequests extends BaseRequests {
 
   public getBaselineCompare(screenshotId: string) : Promise<ImageCompareResponse> {
     return this.get<ImageCompareResponse>(`screenshot/${screenshotId}/baseline/compare/`);
+  }
+
+  /**
+   * Finds a stored screenshot (the template) within another stored screenshot using
+   * multi-scale template matching, and returns the matched region(s).
+   * @param {string} screenshotId - the screenshot to search in
+   * @param {string} templateScreenshotId - the screenshot to search for
+   * @param {FindImageOptions} [options]
+   */
+  public findImageInScreenshot(screenshotId: string, templateScreenshotId: string, options?: FindImageOptions): Promise<ImageFindResponse> {
+    return this.get<ImageFindResponse>(`screenshot/${screenshotId}/find/${templateScreenshotId}`, {
+      params: options,
+    });
+  }
+
+  /**
+   * Same search as findImageInScreenshot, but resolves with the screenshot image with
+   * the matched region(s) outlined.
+   */
+  public findImageInScreenshotImage(screenshotId: string, templateScreenshotId: string, options?: FindImageOptions): Promise<AxiosResponse> {
+    return this.get<AxiosResponse>(`screenshot/${screenshotId}/find/${templateScreenshotId}/image`, {
+      params: options,
+      responseType: 'arraybuffer',
+    });
+  }
+
+  /**
+   * Finds a local template image file within a stored screenshot using multi-scale
+   * template matching. The template is uploaded with the request and not stored.
+   * @param {string} screenshotId - the screenshot to search in
+   * @param {string} templateFilePath - path of the local template image to search for
+   * @param {FindImageOptions} [options]
+   */
+  public findUploadedImageInScreenshot(screenshotId: string, templateFilePath: string, options?: FindImageOptions): Promise<ImageFindResponse> {
+    const path = require('path');
+    const fs = require('fs');
+    const formData = new FormData();
+    const fullPath = path.resolve(templateFilePath);
+    formData.append('template', fs.createReadStream(fullPath), path.basename(fullPath));
+    return this.post<ImageFindResponse>(`screenshot/${screenshotId}/find`, formData, {
+      headers: formData.getHeaders(),
+      params: options,
+    });
   }
 
 }
