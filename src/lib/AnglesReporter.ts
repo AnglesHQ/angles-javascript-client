@@ -30,6 +30,8 @@ export class AnglesReporterClass {
   private currentBuild: Build;
   private currentExecution: CreateExecution;
   private currentAction: Action;
+  private batchMode = false;
+  private batchedExecutions: CreateExecution[] = [];
   private apiConfig = {
     returnRejectedPromiseOnError: true,
     timeout: 10000,
@@ -63,6 +65,18 @@ export class AnglesReporterClass {
   public setApiKey(apiKey: string) {
     (this.apiConfig.headers.common as any)['x-api-key'] = apiKey;
     this.instantiateAxios();
+  }
+
+  /**
+   * When batch mode is enabled, saveTest() no longer sends each test execution to the Angles
+   * API individually, but stores them in the reporter instead. Once all tests are done, call
+   * saveAllTests() to store all the executions against the current build in a single request.
+   * Screenshots are always uploaded individually (they need the build id), so they can still
+   * be saved as the tests run.
+   * @param batchMode
+   */
+  public setBatchMode(batchMode: boolean) {
+    this.batchMode = batchMode;
   }
 
   /**
@@ -151,7 +165,35 @@ export class AnglesReporterClass {
   }
 
   public saveTest(): Promise<Execution> {
+    if (this.batchMode) {
+      this.batchedExecutions.push(this.currentExecution);
+      return Promise.resolve(null);
+    }
     return this.executions.saveExecution(this.currentExecution);
+  }
+
+  /**
+   * Stores all the test executions gathered by saveTest() whilst in batch mode against the
+   * current build in a single request. Call this once at the end of the test run.
+   */
+  public saveAllTests(): Promise<Build> {
+    if (this.batchedExecutions.length === 0) {
+      return Promise.resolve(this.currentBuild);
+    }
+    const executions = this.batchedExecutions;
+    this.batchedExecutions = [];
+    return new Promise((resolve, reject) => {
+      this.builds.addExecutions(this.currentBuild._id, executions)
+        .then((updatedBuild) => {
+          this.currentBuild = updatedBuild;
+          resolve(updatedBuild);
+        })
+        .catch((error) => {
+          // put the executions back so a retry of saveAllTests() doesn't lose them
+          this.batchedExecutions = executions.concat(this.batchedExecutions);
+          reject(error);
+        })
+    });
   }
 
   public saveScreenshot(filePath: string, view: string, tags: string[]): Promise<Screenshot> {

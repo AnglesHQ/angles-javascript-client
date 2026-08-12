@@ -1,6 +1,7 @@
 import {AxiosInstance, AxiosResponse} from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { CreateBuild } from '../models/requests/CreateBuild';
+import { CreateExecution } from '../models/requests/CreateExecution';
 import { Build } from '../models/Build';
 import { Artifact } from '../models/Artifact';
 import { BuildsResponse } from '../models/response/BuildsResponse';
@@ -112,6 +113,28 @@ export class BuildRequests extends BaseRequests {
 
   public setKeep(buildId: string, keep: boolean): Promise<Build> {
     return this.put<Build>(`build/${buildId}/keep`, { keep });
+  }
+
+  /**
+   * Stores all the given test executions against an existing build in a single call.
+   * Executions are grouped into suites by their suite name and the build metrics are
+   * recalculated by the Angles API.
+   *
+   * @param {string} buildId - id of the build to add the executions to.
+   * @param {CreateExecution[]} executions - the executions to store against the build.
+   */
+  public addExecutions(buildId: string, executions: CreateExecution[]): Promise<Build> {
+    return this.put<Build>(
+      `build/${buildId}/executions`,
+      {
+        executions,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
   }
 
   public addArtifacts(buildId: string, artifacts: Artifact[]): Promise<Build> {

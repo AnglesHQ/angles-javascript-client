@@ -53,6 +53,20 @@ await anglesReporter.saveTest();
 
 ```
 
+### Batch mode
+By default every call to `saveTest()` sends the test execution to the Angles API straight away. If you'd rather send the whole test run in a single request at the end (e.g. for large runs), you can enable batch mode. The build is still created up-front and screenshots are still uploaded individually as the tests run (they need the build id), but the executions are gathered by the reporter until you call `saveAllTests()`.
+
+``` javascript
+anglesReporter.setBatchMode(true);
+await anglesReporter.startBuild('TestRunName', 'Team', 'Environment', 'Component');
+
+// run your tests as usual: startTest(), saveScreenshot(), pass()/fail() and saveTest()
+// saveTest() now stores the executions in the reporter rather than sending them.
+
+// once all tests are done, store all the executions against the build in one request.
+await anglesReporter.saveAllTests();
+```
+
 If you want to create your own reporter, you can instantiate the request classes yourself.
 ```javascript
 
