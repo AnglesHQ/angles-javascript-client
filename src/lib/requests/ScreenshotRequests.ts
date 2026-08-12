@@ -6,6 +6,7 @@ import { StoreScreenshot } from '../models/requests/StoreScreenshot';
 import { ImageCompareResponse } from '../models/response/ImageCompareResponse';
 import { ImageFindResponse } from '../models/response/ImageFindResponse';
 import { FindImageOptions } from '../models/requests/FindImageOptions';
+import { CompareOptions } from '../models/requests/CompareOptions';
 import {DefaultResponse} from "../models/response/DefaultResponse";
 
 export class ScreenshotRequests extends BaseRequests {
@@ -122,21 +123,39 @@ export class ScreenshotRequests extends BaseRequests {
     return this.get<Screenshot>(path);
   }
 
-  // TODO: Get screenshot compare Resemblejs JSON
+  /**
+   * Compares two stored screenshots and returns the comparison statistics.
+   * @param {CompareOptions} [options] - algorithm/threshold/regions
+   */
+  public compareScreenshots(screenshotId: string, screenshotCompareId: string, options?: CompareOptions): Promise<ImageCompareResponse> {
+    return this.get<ImageCompareResponse>(`screenshot/${screenshotId}/compare/${screenshotCompareId}`, {
+      params: options,
+    });
+  }
 
-  // TODO: get screenshot compare Resemblejs Image
+  /**
+   * Compares two stored screenshots and resolves with the diff image.
+   */
+  public compareScreenshotsImage(screenshotId: string, screenshotCompareId: string, cache?: boolean, options?: CompareOptions): Promise<AxiosResponse> {
+    return this.get<AxiosResponse>(`screenshot/${screenshotId}/compare/${screenshotCompareId}/image`, {
+      params: { useCache: cache || false, ...options },
+      responseType: 'arraybuffer',
+    });
+  }
 
-  public getBaselineCompareImage(screenshotId: string, cache: boolean): Promise<AxiosResponse> {
+  public getBaselineCompareImage(screenshotId: string, cache: boolean, options?: CompareOptions): Promise<AxiosResponse> {
     const useCache = cache || false;
     return this.get<AxiosResponse>(`screenshot/${screenshotId}/baseline/compare/image/`,
       {
-        params: { useCache },
+        params: { useCache, ...options },
         responseType: 'arraybuffer'
       });
   }
 
-  public getBaselineCompare(screenshotId: string) : Promise<ImageCompareResponse> {
-    return this.get<ImageCompareResponse>(`screenshot/${screenshotId}/baseline/compare/`);
+  public getBaselineCompare(screenshotId: string, options?: CompareOptions) : Promise<ImageCompareResponse> {
+    return this.get<ImageCompareResponse>(`screenshot/${screenshotId}/baseline/compare/`, {
+      params: options,
+    });
   }
 
   /**
