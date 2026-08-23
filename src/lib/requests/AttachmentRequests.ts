@@ -50,17 +50,33 @@ export class AttachmentRequests extends BaseRequests {
   }
 
   /**
+   * Joins the configured baseURL to a path, tolerating either spelling of the boundary.
+   *
+   * `baseURL` is configured by the consuming application and both spellings are in the
+   * wild - angles-ui sets ".../rest/api/v1.0" with no trailing slash, while other callers
+   * include one. Concatenating blindly produces ".../v1.0attachment/<id>/thumbnail",
+   * which the router cannot match and returns as a 404. Relative request URLs never hit
+   * this because axios resolves those itself; only the URLs built here, for use as an
+   * <img src>, have to do the joining.
+   */
+  private absoluteUrl(path: string): string {
+    const base = this.axios.defaults.baseURL || '';
+    if (!base) return path;
+    return `${base.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+  }
+
+  /**
    * The URL of the full-size image. Returned rather than fetched so it can be used
    * directly as an <img src>, which is how the markdown `attachment:<id>` references in a
    * step's expected result are resolved.
    */
   public getAttachmentUrl(attachmentId: string): string {
-    return `${this.axios.defaults.baseURL || ''}attachment/${attachmentId}/file`;
+    return this.absoluteUrl(`attachment/${attachmentId}/file`);
   }
 
   /** The thumbnail URL. Falls back to the original server-side, so it never 404s. */
   public getThumbnailUrl(attachmentId: string): string {
-    return `${this.axios.defaults.baseURL || ''}attachment/${attachmentId}/thumbnail`;
+    return this.absoluteUrl(`attachment/${attachmentId}/thumbnail`);
   }
 
   /**
