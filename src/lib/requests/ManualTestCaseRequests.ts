@@ -15,6 +15,10 @@ export interface ManualTestCaseFilters {
   priority?: string[];
   tags?: string[];
   search?: string;
+  /** A folder id, or the literal 'none' for cases that are not filed anywhere. */
+  folder?: string;
+  /** With a folder id, also return the cases in every sub-folder beneath it. */
+  includeSubFolders?: boolean;
   limit?: number;
   skip?: number;
 }
@@ -35,6 +39,8 @@ export class ManualTestCaseRequests extends BaseRequests {
     if (filters.priority && filters.priority.length > 0) params.priority = filters.priority.join(',');
     if (filters.tags && filters.tags.length > 0) params.tags = filters.tags.join(',');
     if (filters.search) params.search = filters.search;
+    if (filters.folder) params.folder = filters.folder;
+    if (filters.includeSubFolders) params.includeSubFolders = true;
     if (filters.limit !== undefined) params.limit = filters.limit;
     if (filters.skip !== undefined) params.skip = filters.skip;
     return this.get<ManualTestCasesResponse>('manual-test-case', { params });

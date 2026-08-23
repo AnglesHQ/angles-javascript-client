@@ -13,6 +13,8 @@ export class CreateManualStep {
 
 export class CreateManualTestCase {
   team: string;
+  /** File the case into a folder on create. Null or absent files it at the root. */
+  folder?: string | null;
   title: string;
   component?: string;
   description?: string;
