@@ -6,6 +6,7 @@ import { Build } from '../models/Build';
 import { Artifact } from '../models/Artifact';
 import { BuildsResponse } from '../models/response/BuildsResponse';
 import { DefaultResponse } from '../models/response/DefaultResponse';
+import { ExecutionTypes } from '../models/enum/ExecutionTypes';
 import moment from "moment";
 
 export class BuildRequests extends BaseRequests {
@@ -33,12 +34,19 @@ export class BuildRequests extends BaseRequests {
     return this.get<BuildsResponse>(requestPath);
   }
 
-  public getBuildsWithFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number): Promise<BuildsResponse> {
+  /**
+   * @param {ExecutionTypes=} executionType - narrow to automated or manual builds. Omit
+   * for both, preserving the behaviour every existing caller relies on.
+   */
+  public getBuildsWithFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, executionType?: ExecutionTypes): Promise<BuildsResponse> {
     let params:any = {
       teamId,
       skip,
       limit,
     };
+    if (executionType) {
+      params.executionType = executionType;
+    }
     if (filterEnvironments && filterEnvironments.length > 0) {
       params = {
         environmentIds: filterEnvironments.join(','),
@@ -56,7 +64,7 @@ export class BuildRequests extends BaseRequests {
     });
   }
 
-  public getBuildsWithDateFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, fromDate: Date, toDate: Date): Promise<BuildsResponse> {
+  public getBuildsWithDateFilters(teamId:string, filterEnvironments: string[], filterComponents: string[], skip: number, limit:number, fromDate: Date, toDate: Date, executionType?: ExecutionTypes): Promise<BuildsResponse> {
     let params:any = {
       teamId,
       skip,
@@ -64,6 +72,9 @@ export class BuildRequests extends BaseRequests {
       fromDate: moment(fromDate).format('YYYY-MM-DD'),
       toDate: moment(toDate).format('YYYY-MM-DD'),
     };
+    if (executionType) {
+      params.executionType = executionType;
+    }
     if (filterEnvironments && filterEnvironments.length > 0) {
       params = {
         environmentIds: filterEnvironments.join(','),

@@ -3,6 +3,7 @@ import { Environment } from './Environment';
 import { Team } from './Team';
 import { Artifact } from './Artifact';
 import { Suite } from './Suite';
+import { ExecutionTypes } from './enum/ExecutionTypes';
 
 export class Build {
   _id: string;
@@ -17,4 +18,6 @@ export class Build {
   team: Team;
   component: string;
   suites: Suite[];
+  /** Whether the results came from an automated run or a manual test run. */
+  executionType: ExecutionTypes;
 }
