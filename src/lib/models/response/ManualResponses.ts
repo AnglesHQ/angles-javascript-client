@@ -1,4 +1,5 @@
 import { ManualTestCase } from '../manual/ManualTestCase';
+import { ManualFolder } from '../manual/ManualFolder';
 import { ManualTestCaseVersion } from '../manual/ManualTestCaseVersion';
 import { SharedStep } from '../manual/SharedStep';
 import { CustomFieldDefinition } from '../manual/CustomFieldDefinition';
@@ -64,6 +65,19 @@ export class ManualTestRunsResponse {
 export class ManualChangeHistoryResponse {
   history: ManualChangeHistoryEntry[];
   metrics: { totalEntries: number };
+}
+
+export class ManualFoldersResponse {
+  folders: ManualFolder[];
+  /** Test cases not filed in any folder - the implicit root of the tree. */
+  unfiledCount: number;
+  metrics: { totalFolders: number };
+}
+
+export class MoveTestCasesResponse {
+  message: string;
+  moved: number;
+  folder: string | null;
 }
 
 export { ManualTestCaseVersion };

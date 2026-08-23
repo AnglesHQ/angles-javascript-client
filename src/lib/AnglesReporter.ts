@@ -5,6 +5,7 @@ import { BuildRequests } from './requests/BuildRequests';
 import { ExecutionRequests } from './requests/ExecutionRequests';
 import { ScreenshotRequests } from './requests/ScreenshotRequests';
 import { ManualTestCaseRequests } from './requests/ManualTestCaseRequests';
+import { ManualFolderRequests } from './requests/ManualFolderRequests';
 import { SharedStepRequests } from './requests/SharedStepRequests';
 import { CustomFieldRequests } from './requests/CustomFieldRequests';
 import { AttachmentRequests } from './requests/AttachmentRequests';
@@ -32,6 +33,7 @@ export class AnglesReporterClass {
   public executions: ExecutionRequests;
   public screenshots: ScreenshotRequests;
   public manualTestCases: ManualTestCaseRequests;
+  public manualFolders: ManualFolderRequests;
   public sharedSteps: SharedStepRequests;
   public customFields: CustomFieldRequests;
   public attachments: AttachmentRequests;
@@ -108,6 +110,7 @@ export class AnglesReporterClass {
     this.executions = new ExecutionRequests(this.axiosInstance);
     this.screenshots = new ScreenshotRequests(this.axiosInstance);
     this.manualTestCases = new ManualTestCaseRequests(this.axiosInstance);
+    this.manualFolders = new ManualFolderRequests(this.axiosInstance);
     this.sharedSteps = new SharedStepRequests(this.axiosInstance);
     this.customFields = new CustomFieldRequests(this.axiosInstance);
     this.attachments = new AttachmentRequests(this.axiosInstance);

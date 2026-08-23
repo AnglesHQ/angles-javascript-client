@@ -11,6 +11,8 @@ export class ManualTestCase {
   _id: string;
   team: Team | string;
   component: string;
+  /** Folder this case is filed under, or null for the team root. */
+  folder?: string | null;
   title: string;
   description: string;
   preconditions: string;
