@@ -8,4 +8,6 @@ export class Step {
   status: StepStates;
   timestamp: Date;
   screenshot: string;
+  /** Images attached while recording a manual step result. */
+  attachments: string[];
 }
