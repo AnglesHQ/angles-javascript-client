@@ -23,6 +23,7 @@ import { ScreenshotPlatform } from './models/requests/ScreenshotPlatform';
 import { Execution } from './models/Execution';
 import { ImageCompareResponse } from './models/response/ImageCompareResponse';
 import {Platform} from "./models/Platform";
+import { TestAttachment } from './models/TestAttachment';
 
 export class AnglesReporterClass {
   private static _instance: AnglesReporterClass = new AnglesReporterClass();
@@ -237,6 +238,78 @@ export class AnglesReporterClass {
 
   public compareScreenshotAgainstBaseline(screenshotId: string) : Promise<ImageCompareResponse> {
     return this.screenshots.getBaselineCompare(screenshotId);
+  }
+
+  /**
+   * Uploads a file from disk and attaches it to the current test: a video, a Playwright
+   * trace, a HAR file, a console log and so on. Await it before saveTest() - the id is only
+   * added to the test once the upload has finished.
+   *
+   * The file extension decides how Angles shows it: .log/.txt, .json, .har, .webm/.mp4,
+   * .zip (a trace when the name contains "trace"), .html/.htm, or an image.
+   *
+   * @param filePath path to the file
+   * @param fileName optional name to show instead of the file's own (keep the extension)
+   */
+  public async attachFile(filePath: string, fileName?: string): Promise<TestAttachment> {
+    const execution = this.requireExecution('attachFile');
+    const attachment = await this.attachments.uploadTestAttachment(this.currentBuild._id, filePath, fileName);
+    execution.attachments = (execution.attachments || []).concat(attachment._id);
+    return attachment;
+  }
+
+  /**
+   * Attaches in-memory content to the current test, e.g. a log you collected while the test
+   * ran. `fileName` is required: its extension decides how Angles shows the file.
+   */
+  public async attachData(data: Buffer | string, fileName: string): Promise<TestAttachment> {
+    const execution = this.requireExecution('attachData');
+    const attachment = await this.attachments.uploadTestAttachmentData(this.currentBuild._id, data, fileName);
+    execution.attachments = (execution.attachments || []).concat(attachment._id);
+    return attachment;
+  }
+
+  /**
+   * Uploads a file from disk and attaches it to the most recent step, e.g. the page's HTML
+   * or a screenshot taken when an assertion failed. Await it before saveTest().
+   */
+  public async attachFileToLastStep(filePath: string, fileName?: string): Promise<TestAttachment> {
+    const step = this.requireLastStep('attachFileToLastStep');
+    const attachment = await this.attachments.uploadTestAttachment(this.currentBuild._id, filePath, fileName);
+    step.attachments = (step.attachments || []).concat(attachment._id);
+    return attachment;
+  }
+
+  /**
+   * Attaches in-memory content to the most recent step, e.g.
+   * `attachDataToLastStep(await page.content(), 'page.html')` right after a fail().
+   */
+  public async attachDataToLastStep(data: Buffer | string, fileName: string): Promise<TestAttachment> {
+    const step = this.requireLastStep('attachDataToLastStep');
+    const attachment = await this.attachments.uploadTestAttachmentData(this.currentBuild._id, data, fileName);
+    step.attachments = (step.attachments || []).concat(attachment._id);
+    return attachment;
+  }
+
+  // The test (and step) an attachment belongs to are taken when the call is made, not when
+  // the upload finishes, so a slow upload still lands on the right test.
+  private requireExecution(method: string): CreateExecution {
+    if (!this.currentBuild || !this.currentBuild._id) {
+      throw new Error(`${method}: start or set a build before attaching files.`);
+    }
+    if (!this.currentExecution) {
+      throw new Error(`${method}: call startTest() before attaching files.`);
+    }
+    return this.currentExecution;
+  }
+
+  private requireLastStep(method: string): Step {
+    this.requireExecution(method);
+    const steps = this.currentAction ? this.currentAction.steps : [];
+    if (!steps || steps.length === 0) {
+      throw new Error(`${method}: add a step (pass, fail, info, ...) before attaching a file to it.`);
+    }
+    return steps[steps.length - 1];
   }
 
   public addAction(name: string) {
