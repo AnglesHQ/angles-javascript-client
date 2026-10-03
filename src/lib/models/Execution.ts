@@ -16,6 +16,8 @@ export class Execution {
   platforms: Platform[];
   tags: string[];
   meta: Map<string, string>;
+  /** Ids of the files attached to the whole test. Step-level ones are on the steps. */
+  attachments: string[];
   status: ExecutionStates;
   executionType: ExecutionTypes;
   /** Set on a manual execution: the test case it came from. */

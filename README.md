@@ -53,6 +53,30 @@ await anglesReporter.saveTest();
 
 ```
 
+### Attachments
+A test can attach files to its results: console logs, network HAR files, videos, Playwright traces, page HTML snapshots and images. Angles shows each one on the test (or the step) with a viewer that suits it. The file extension decides how it is shown, so keep the real one: `.log`/`.txt`, `.json`, `.har`, `.webm`/`.mp4`, `.zip` (shown as a Playwright trace when the name contains "trace"), `.html`/`.htm`, `.png`/`.jpg`/`.jpeg`/`.gif`/`.webp`. Requires an Angles server with test attachment support.
+
+``` javascript
+anglesReporter.startTest('Guest user can pay with a saved card', 'Checkout');
+anglesReporter.addAction('Pay with card');
+anglesReporter.fail('Order confirmation', 'Order confirmed', 'Payment declined', '');
+
+// Attach to the step you just reported, e.g. the page as it was when the assertion failed.
+await anglesReporter.attachDataToLastStep(await page.content(), 'page.html');
+await anglesReporter.attachFileToLastStep('/path/to/failure.png');
+
+// Attach to the whole test, e.g. what Playwright recorded.
+await anglesReporter.attachFile(await page.video().path(), 'checkout.webm');
+await anglesReporter.attachFile('/path/to/trace.zip');
+await anglesReporter.attachFile('/path/to/network.har');
+await anglesReporter.attachData(consoleLines.join('\n'), 'console.log');
+
+// Await the attach calls before saving: the file is linked when the test is saved.
+await anglesReporter.saveTest();
+```
+
+Files are uploaded against the current build as soon as you attach them, so this works in batch mode too.
+
 ### Batch mode
 By default every call to `saveTest()` sends the test execution to the Angles API straight away. If you'd rather send the whole test run in a single request at the end (e.g. for large runs), you can enable batch mode. The build is still created up-front and screenshots are still uploaded individually as the tests run (they need the build id), but the executions are gathered by the reporter until you call `saveAllTests()`.
 

@@ -10,4 +10,9 @@ export class CreateExecution {
   platforms: Platform[];
   tags: string[];
   meta: Map<string, string>;
+  /**
+   * Ids of files attached to the whole test (see AnglesReporter.attachFile): a video, a
+   * trace, a HAR file or a console log.
+   */
+  attachments?: string[];
 }
