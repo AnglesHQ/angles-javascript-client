@@ -1,6 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { BaseRequests } from './BaseRequests';
 import { Team } from '../models/Team';
+import { TeamMember } from '../models/TeamMember';
 import { CreateTeam } from '../models/requests/CreateTeam';
 import { DefaultResponse } from '../models/response/DefaultResponse';
 
@@ -67,6 +68,41 @@ export class TeamRequests extends BaseRequests {
     return this.put<Team>(`team/${teamId}`, {
       components,
     });
+  }
+
+  /**
+   * Lists the users that belong to a team. Requires an admin, or a team lead of this team,
+   * signed in with a session (API keys are rejected).
+   *
+   * @param {string} teamId - id of the team.
+   */
+  public getTeamMembers(teamId: string): Promise<TeamMember[]> {
+    return this.get<TeamMember[]>(`team/${teamId}/members`);
+  }
+
+  /**
+   * Adds an existing user to a team. A team lead can only add users with the 'user' role;
+   * adding team leads or admins requires an admin. Requires a session (API keys are rejected).
+   *
+   * @param {string} teamId - id of the team.
+   * @param {string} username - username of the user to add (case-insensitive).
+   */
+  public addTeamMember(teamId: string, username: string): Promise<TeamMember> {
+    return this.post<TeamMember>(`team/${teamId}/members`, {
+      username,
+    });
+  }
+
+  /**
+   * Removes a user from a team (their other teams are unaffected). A team lead can only
+   * remove users with the 'user' role, and not themselves; anything else requires an admin.
+   * Requires a session (API keys are rejected).
+   *
+   * @param {string} teamId - id of the team.
+   * @param {string} userId - id of the user to remove.
+   */
+  public removeTeamMember(teamId: string, userId: string): Promise<DefaultResponse> {
+    return this.delete<DefaultResponse>(`team/${teamId}/members/${userId}`);
   }
 
 }
