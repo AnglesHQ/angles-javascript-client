@@ -81,6 +81,19 @@ export class TeamRequests extends BaseRequests {
   }
 
   /**
+   * Searches for users that can be added to a team, for a type-ahead. Matches part of the
+   * username (case-insensitive) and returns at most 10 users who are not already in the team.
+   * A team lead only gets users with the 'user' role; an admin also gets team leads and admins.
+   * Requires an admin, or a team lead of this team, signed in with a session.
+   *
+   * @param {string} teamId - id of the team.
+   * @param {string} query - part of the username: 3 to 50 letters, numbers, hyphens or underscores.
+   */
+  public searchTeamMemberCandidates(teamId: string, query: string): Promise<TeamMember[]> {
+    return this.get<TeamMember[]>(`team/${teamId}/members/candidates`, { params: { q: query } });
+  }
+
+  /**
    * Adds an existing user to a team. A team lead can only add users with the 'user' role;
    * adding team leads or admins requires an admin. Requires a session (API keys are rejected).
    *
