@@ -4,6 +4,7 @@ import { Team } from './Team';
 import { Artifact } from './Artifact';
 import { Suite } from './Suite';
 import { ExecutionTypes } from './enum/ExecutionTypes';
+import { TriggeredBy } from './TriggeredBy';
 
 export class Build {
   _id: string;
@@ -20,4 +21,6 @@ export class Build {
   suites: Suite[];
   /** Whether the results came from an automated run or a manual test run. */
   executionType: ExecutionTypes;
+  /** Who started the build. Absent on builds created before this was recorded. */
+  triggeredBy?: TriggeredBy;
 }

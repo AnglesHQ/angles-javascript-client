@@ -47,6 +47,8 @@ export * from './lib/models/manual/SharedStep';
 export * from './lib/models/manual/CustomFieldDefinition';
 export * from './lib/models/manual/Attachment';
 export * from './lib/models/TestAttachment';
+export * from './lib/models/TeamMember';
+export * from './lib/models/TriggeredBy';
 export * from './lib/models/manual/ManualTestRun';
 export * from './lib/models/manual/ManualChangeHistoryEntry';
 export * from './lib/models/requests/CreateManualTestCase';
