@@ -83,22 +83,24 @@ export class TeamRequests extends BaseRequests {
   /**
    * Searches for users that can be added to a team, for a type-ahead. Matches part of the
    * username (case-insensitive) and returns at most 10 users who are not already in the team.
-   * A team lead only gets users with the 'user' role; an admin also gets team leads and admins.
+   * Every other user is offered whatever their role or sign-in method, except the core admin
+   * account (the seeded ANGLES_ADMIN_USERNAME account), which is never returned.
    * Requires an admin, or a team lead of this team, signed in with a session.
    *
    * @param {string} teamId - id of the team.
-   * @param {string} query - part of the username: 3 to 50 letters, numbers, hyphens or underscores.
+   * @param {string} query - part of the username: 3 to 254 letters, numbers and . _ @ + - characters
+   * (so email-style usernames work).
    */
   public searchTeamMemberCandidates(teamId: string, query: string): Promise<TeamMember[]> {
     return this.get<TeamMember[]>(`team/${teamId}/members/candidates`, { params: { q: query } });
   }
 
   /**
-   * Adds an existing user to a team. A team lead can only add users with the 'user' role;
-   * adding team leads or admins requires an admin. Requires a session (API keys are rejected).
+   * Adds an existing user to a team. A team lead can add any user except the core admin
+   * account. Requires a session (API keys are rejected).
    *
    * @param {string} teamId - id of the team.
-   * @param {string} username - username of the user to add (case-insensitive).
+   * @param {string} username - username of the user to add (case-insensitive); can be an email address.
    */
   public addTeamMember(teamId: string, username: string): Promise<TeamMember> {
     return this.post<TeamMember>(`team/${teamId}/members`, {
@@ -107,8 +109,8 @@ export class TeamRequests extends BaseRequests {
   }
 
   /**
-   * Removes a user from a team (their other teams are unaffected). A team lead can only
-   * remove users with the 'user' role, and not themselves; anything else requires an admin.
+   * Removes a user from a team (their other teams are unaffected). A team lead can remove any
+   * member except themselves and the core admin account; an admin can remove anyone.
    * Requires a session (API keys are rejected).
    *
    * @param {string} teamId - id of the team.
