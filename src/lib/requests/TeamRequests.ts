@@ -65,7 +65,7 @@ export class TeamRequests extends BaseRequests {
    * @param {string[]} components - list of components you want to add.
    */
   public addComponentsToTeam(teamId: string, components: string[]): Promise<Team> {
-    return this.put<Team>(`team/${teamId}`, {
+    return this.put<Team>(`team/${teamId}/components`, {
       components,
     });
   }
@@ -78,6 +78,19 @@ export class TeamRequests extends BaseRequests {
    */
   public getTeamMembers(teamId: string): Promise<TeamMember[]> {
     return this.get<TeamMember[]>(`team/${teamId}/members`);
+  }
+
+  /**
+   * Searches for users that can be added to a team, for a type-ahead. Matches part of the
+   * username (case-insensitive) and returns at most 10 users who are not already in the team.
+   * A team lead only gets users with the 'user' role; an admin also gets team leads and admins.
+   * Requires an admin, or a team lead of this team, signed in with a session.
+   *
+   * @param {string} teamId - id of the team.
+   * @param {string} query - part of the username: 3 to 50 letters, numbers, hyphens or underscores.
+   */
+  public searchTeamMemberCandidates(teamId: string, query: string): Promise<TeamMember[]> {
+    return this.get<TeamMember[]>(`team/${teamId}/members/candidates`, { params: { q: query } });
   }
 
   /**
