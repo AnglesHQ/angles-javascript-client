@@ -65,7 +65,7 @@ export class TeamRequests extends BaseRequests {
    * @param {string[]} components - list of components you want to add.
    */
   public addComponentsToTeam(teamId: string, components: string[]): Promise<Team> {
-    return this.put<Team>(`team/${teamId}`, {
+    return this.put<Team>(`team/${teamId}/components`, {
       components,
     });
   }
